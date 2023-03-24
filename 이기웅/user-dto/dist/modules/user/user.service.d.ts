@@ -1,9 +1,9 @@
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { User } from "./entities/user.entity";
 export declare class UserService {
     private users;
-    create(dto: CreateUserDto): void;
+    create(dto: CreateUserDto): string;
     getAll(): User[];
     getOne(id: string): User;
     update(id: string, dto: UpdateUserDto): void;

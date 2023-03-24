@@ -10,16 +10,19 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CreateUserDto = void 0;
+const swagger_1 = require("@nestjs/swagger");
 const class_validator_1 = require("class-validator");
 class CreateUserDto {
 }
 __decorate([
     (0, class_validator_1.IsString)(),
     (0, class_validator_1.IsNotEmpty)(),
+    (0, swagger_1.ApiProperty)({ description: "이름" }),
     __metadata("design:type", String)
 ], CreateUserDto.prototype, "name", void 0);
 __decorate([
     (0, class_validator_1.IsNumber)(),
+    (0, swagger_1.ApiProperty)({ description: "나이" }),
     __metadata("design:type", Number)
 ], CreateUserDto.prototype, "age", void 0);
 exports.CreateUserDto = CreateUserDto;

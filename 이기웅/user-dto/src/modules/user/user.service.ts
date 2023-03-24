@@ -1,15 +1,17 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { v4 as uuid } from 'uuid';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entity';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { v4 as uuid } from "uuid";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
+import { User } from "./entities/user.entity";
 
 @Injectable()
 export class UserService {
   private users: User[] = [];
 
-  create(dto: CreateUserDto) {
-    this.users.push({ id: uuid(), ...dto });
+  create(dto: CreateUserDto): string {
+    const createdUser = { id: uuid(), ...dto };
+    this.users.push(createdUser);
+    return createdUser.id;
   }
 
   getAll(): User[] {
@@ -18,7 +20,8 @@ export class UserService {
 
   getOne(id: string): User {
     const user = this.users.find((user) => user.id === id);
-    if (!user) throw new NotFoundException(`${id} ID 유저가 존재하지 않습니다.`);
+    if (!user)
+      throw new NotFoundException(`${id} ID 유저가 존재하지 않습니다.`);
 
     return user;
   }

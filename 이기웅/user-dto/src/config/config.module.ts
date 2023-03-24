@@ -5,6 +5,7 @@ import { ConfigService } from "./config.service";
   providers: [
     {
       provide: ConfigService,
+      // NOTE: 보통 MOCKING 하거나, 값을 직접 넣어서 쓸 때
       useValue: new ConfigService(".env"),
     },
   ],

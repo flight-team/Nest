@@ -14,7 +14,9 @@ let UserService = class UserService {
         this.users = [];
     }
     create(dto) {
-        this.users.push(Object.assign({ id: (0, uuid_1.v4)() }, dto));
+        const createdUser = Object.assign({ id: (0, uuid_1.v4)() }, dto);
+        this.users.push(createdUser);
+        return createdUser.id;
     }
     getAll() {
         return this.users;
