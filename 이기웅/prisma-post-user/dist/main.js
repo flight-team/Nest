@@ -7,8 +7,7 @@ async function bootstrap() {
     const app = await core_1.NestFactory.create(app_module_1.AppModule);
     const configService = app.get(config_1.ConfigService);
     await app.listen(configService.get('PORT'), () => {
-        console.info('Listening on port ' + configService.get('PORT'));
-        console.log(process.env);
+        console.info(`Listening on port ${configService.get('PORT')} 🚀`);
     });
 }
 bootstrap();

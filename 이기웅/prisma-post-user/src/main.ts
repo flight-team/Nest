@@ -7,7 +7,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
 
   await app.listen(configService.get<number>('PORT'), () => {
-    console.info('Listening on port ' + configService.get<number>('PORT'));
+    console.info(`Listening on port ${configService.get<number>('PORT')} 🚀`);
   });
 }
 

@@ -11,6 +11,7 @@ const common_1 = require("@nestjs/common");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const config_1 = require("@nestjs/config");
+const env_validation_1 = require("./config/env.validation");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -19,6 +20,7 @@ AppModule = __decorate([
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
                 cache: true,
+                validate: env_validation_1.validate,
                 envFilePath: '.env',
             }),
         ],
