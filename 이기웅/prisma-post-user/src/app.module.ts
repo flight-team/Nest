@@ -5,6 +5,7 @@ import { validate } from '@/config/env.validation';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { PrismaModule } from './database';
 
 @Module({
   imports: [
@@ -12,9 +13,9 @@ import { AppService } from './app.service';
       isGlobal: true,
       cache: true,
       validate,
-      // NOTE: NODE_ENV가 지금은 딱히 필요하지 않아서 둠
       envFilePath: '.env',
     }),
+    PrismaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
