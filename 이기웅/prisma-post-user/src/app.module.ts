@@ -4,7 +4,6 @@ import { ConfigModule } from '@nestjs/config';
 import { validate } from '@/config/env.validation';
 
 import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { PrismaModule } from './database';
 
 import Modules from './modules';
@@ -21,6 +20,5 @@ import Modules from './modules';
     ...Modules,
   ],
   controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}

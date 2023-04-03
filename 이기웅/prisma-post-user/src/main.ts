@@ -1,16 +1,20 @@
 import { ConfigService } from '@nestjs/config';
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
+import { setupApp } from './config/app.config';
+import { setupSwagger } from './config/swagger.config';
 import { PrismaService } from './database';
-import { ClassSerializerInterceptor } from '@nestjs/common';
+import { setGlobalInterceptors } from './interceptors';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const configService = app.get(ConfigService);
   const prismaService = app.get(PrismaService);
 
-  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+  setupApp(app);
+  setupSwagger(app);
+  setGlobalInterceptors(app);
 
   await prismaService.enableShutdownHooks(app);
 

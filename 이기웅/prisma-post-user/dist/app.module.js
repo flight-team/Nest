@@ -11,7 +11,6 @@ const common_1 = require("@nestjs/common");
 const config_1 = require("@nestjs/config");
 const env_validation_1 = require("./config/env.validation");
 const app_controller_1 = require("./app.controller");
-const app_service_1 = require("./app.service");
 const database_1 = require("./database");
 const modules_1 = require("./modules");
 let AppModule = class AppModule {
@@ -29,7 +28,6 @@ AppModule = __decorate([
             ...modules_1.default,
         ],
         controllers: [app_controller_1.AppController],
-        providers: [app_service_1.AppService],
     })
 ], AppModule);
 exports.AppModule = AppModule;

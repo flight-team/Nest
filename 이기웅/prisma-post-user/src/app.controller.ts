@@ -1,13 +1,28 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Res } from '@nestjs/common';
 
-import { AppService } from './app.service';
+import {
+  ApiExcludeEndpoint,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { Response } from 'express';
 
+@ApiTags('Health Check')
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor() {}
 
   @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @ApiExcludeEndpoint()
+  redirectSwagger(@Res() res: Response): void {
+    res.redirect('/api');
+  }
+
+  @Get('/health')
+  @ApiOperation({ summary: 'Health Check' })
+  @ApiOkResponse({ description: 'Health check' })
+  healthCheck() {
+    return { status: 'health' };
   }
 }
