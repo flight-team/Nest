@@ -7,15 +7,18 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './database';
 
+import Modules from './modules';
+
 @Module({
   imports: [
+    PrismaModule,
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
       validate,
       envFilePath: '.env',
     }),
-    PrismaModule,
+    ...Modules,
   ],
   controllers: [AppController],
   providers: [AppService],

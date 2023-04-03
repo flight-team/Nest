@@ -1,0 +1,2 @@
+declare class ErrorDTO<T> {
+}

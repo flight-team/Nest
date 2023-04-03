@@ -13,18 +13,20 @@ const env_validation_1 = require("./config/env.validation");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const database_1 = require("./database");
+const modules_1 = require("./modules");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
     (0, common_1.Module)({
         imports: [
+            database_1.PrismaModule,
             config_1.ConfigModule.forRoot({
                 isGlobal: true,
                 cache: true,
                 validate: env_validation_1.validate,
                 envFilePath: '.env',
             }),
-            database_1.PrismaModule,
+            ...modules_1.default,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
