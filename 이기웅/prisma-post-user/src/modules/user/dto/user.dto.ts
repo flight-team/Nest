@@ -1,8 +1,5 @@
-import {
-  ApiHideProperty,
-  ApiProperty,
-  ApiPropertyOptional,
-} from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { User } from '@prisma/client';
 
 export class UserDto {
   @ApiProperty({ type: 'string' })
@@ -10,9 +7,6 @@ export class UserDto {
 
   @ApiProperty({ type: 'string' })
   name: string;
-
-  @ApiHideProperty()
-  password: string;
 
   @ApiProperty({ type: Date })
   createdAt: Date;
@@ -23,7 +17,11 @@ export class UserDto {
   @ApiPropertyOptional({ type: Date })
   deletedAt?: Date;
 
-  constructor(args: UserDto) {
-    Object.assign(this, args);
+  constructor(args: User) {
+    this.id = args.id;
+    this.name = args.name;
+    this.createdAt = args.createdAt;
+    this.updatedAt = args.updatedAt;
+    this.deletedAt = args.deletedAt;
   }
 }

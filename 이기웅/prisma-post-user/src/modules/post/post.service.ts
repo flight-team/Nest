@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { PostDto } from './dto/post.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UserService } from '../user/user.service';
+import { UserDto } from '../user/dto/user.dto';
 
 @Injectable()
 export class PostService {

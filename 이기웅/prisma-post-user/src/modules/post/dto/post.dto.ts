@@ -1,9 +1,9 @@
-import { Post } from '@prisma/client';
+import { Post, User } from '@prisma/client';
 import { UserDto } from '@/modules/user/dto/user.dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export type PostDtoArgs = Exclude<Post, 'User'> & {
-  User: UserDto;
+  User: User;
 };
 
 export class PostDto {
@@ -31,6 +31,6 @@ export class PostDto {
     this.content = args.content;
     this.createdAt = args.createdAt;
     this.updatedAt = args.updatedAt;
-    this.user = args.User;
+    this.user = new UserDto(args.User);
   }
 }

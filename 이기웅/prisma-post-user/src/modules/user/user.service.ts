@@ -1,22 +1,12 @@
 import { PrismaService } from '@/database/prisma.service';
 import {
   BadRequestException,
-  Get,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserDto } from './dto/user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from '@prisma/client';
-
-function exclude(user: User, keys: (keyof User)[]): UserDto {
-  for (const key of keys) {
-    delete user?.[key];
-  }
-
-  return new UserDto(user);
-}
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -30,7 +20,7 @@ export class UserService {
     if (foundUserUsingName)
       throw new BadRequestException('이미 존재하는 이름입니다.');
 
-    return exclude(foundUserUsingName, ['password']);
+    return new UserDto(foundUserUsingName);
   }
 
   async getUser(id: string) {
@@ -43,7 +33,7 @@ export class UserService {
         `${id}에 해당하는 사용자가 존재하지 않습니다`,
       );
 
-    return exclude(foundUser, ['password']);
+    return new UserDto(foundUser);
   }
 
   async getUsers(searchName?: string) {
@@ -55,7 +45,7 @@ export class UserService {
       },
     });
 
-    return users.map((user) => exclude(user, ['password']));
+    return users.map((user) => new UserDto(user));
   }
 
   async createUser(createUserDto: CreateUserDto) {

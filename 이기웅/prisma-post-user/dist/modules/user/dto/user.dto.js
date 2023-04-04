@@ -13,7 +13,11 @@ exports.UserDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
 class UserDto {
     constructor(args) {
-        Object.assign(this, args);
+        this.id = args.id;
+        this.name = args.name;
+        this.createdAt = args.createdAt;
+        this.updatedAt = args.updatedAt;
+        this.deletedAt = args.deletedAt;
     }
 }
 __decorate([
@@ -24,10 +28,6 @@ __decorate([
     (0, swagger_1.ApiProperty)({ type: 'string' }),
     __metadata("design:type", String)
 ], UserDto.prototype, "name", void 0);
-__decorate([
-    (0, swagger_1.ApiHideProperty)(),
-    __metadata("design:type", String)
-], UserDto.prototype, "password", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ type: Date }),
     __metadata("design:type", Date)

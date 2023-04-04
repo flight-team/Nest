@@ -13,12 +13,6 @@ exports.UserService = void 0;
 const prisma_service_1 = require("../../database/prisma.service");
 const common_1 = require("@nestjs/common");
 const user_dto_1 = require("./dto/user.dto");
-function exclude(user, keys) {
-    for (const key of keys) {
-        user === null || user === void 0 ? true : delete user[key];
-    }
-    return new user_dto_1.UserDto(user);
-}
 let UserService = class UserService {
     constructor(prisma) {
         this.prisma = prisma;
@@ -29,7 +23,7 @@ let UserService = class UserService {
         });
         if (foundUserUsingName)
             throw new common_1.BadRequestException('이미 존재하는 이름입니다.');
-        return exclude(foundUserUsingName, ['password']);
+        return new user_dto_1.UserDto(foundUserUsingName);
     }
     async getUser(id) {
         const foundUser = await this.prisma.user.findFirst({
@@ -37,7 +31,7 @@ let UserService = class UserService {
         });
         if (!foundUser)
             throw new common_1.NotFoundException(`${id}에 해당하는 사용자가 존재하지 않습니다`);
-        return exclude(foundUser, ['password']);
+        return new user_dto_1.UserDto(foundUser);
     }
     async getUsers(searchName) {
         const users = await this.prisma.user.findMany({
@@ -47,7 +41,7 @@ let UserService = class UserService {
                 },
             },
         });
-        return users.map((user) => exclude(user, ['password']));
+        return users.map((user) => new user_dto_1.UserDto(user));
     }
     async createUser(createUserDto) {
         this.checkNameDuplicated(createUserDto.name);

@@ -19,7 +19,7 @@ class PostDto {
         this.content = args.content;
         this.createdAt = args.createdAt;
         this.updatedAt = args.updatedAt;
-        this.user = args.User;
+        this.user = new user_dto_1.UserDto(args.User);
     }
 }
 __decorate([
