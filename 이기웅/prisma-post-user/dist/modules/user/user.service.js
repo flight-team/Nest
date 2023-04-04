@@ -17,13 +17,13 @@ let UserService = class UserService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    async checkNameDuplicated(name) {
+    async checkNameDuplicated(name, updateUserId) {
         const foundUserUsingName = await this.prisma.user.findFirst({
-            where: { name },
+            where: { name, NOT: { id: updateUserId } },
         });
         if (foundUserUsingName)
             throw new common_1.BadRequestException('이미 존재하는 이름입니다.');
-        return new user_dto_1.UserDto(foundUserUsingName);
+        return false;
     }
     async getUser(id) {
         const foundUser = await this.prisma.user.findFirst({
@@ -44,19 +44,20 @@ let UserService = class UserService {
         return users.map((user) => new user_dto_1.UserDto(user));
     }
     async createUser(createUserDto) {
-        this.checkNameDuplicated(createUserDto.name);
+        await this.checkNameDuplicated(createUserDto.name);
         const createdUser = await this.prisma.user.create({ data: createUserDto });
         return { id: createdUser.id };
     }
     async updateUser(id, updateUserDto) {
-        this.getUser(id);
+        await this.getUser(id);
+        await this.checkNameDuplicated(updateUserDto.name, id);
         await this.prisma.user.update({
             data: updateUserDto,
             where: { id },
         });
     }
     async deleteUser(id) {
-        this.getUser(id);
+        await this.getUser(id);
         await this.prisma.user.delete({ where: { id } });
     }
 };

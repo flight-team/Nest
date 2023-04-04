@@ -7,6 +7,7 @@ export declare class PostService {
     private readonly prisma;
     private readonly userService;
     constructor(prisma: PrismaService, userService: UserService);
+    private checkTitleDuplicated;
     getPost(id: string): Promise<PostDto>;
     getPosts(search?: string): Promise<PostDto[]>;
     createPost(createPostDto: CreatePostDto): Promise<{

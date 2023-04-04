@@ -19,6 +19,7 @@ const post_dto_1 = require("./dto/post.dto");
 const post_service_1 = require("./post.service");
 const create_post_response_dto_1 = require("./dto/create-post-response.dto");
 const create_post_dto_1 = require("./dto/create-post.dto");
+const update_post_dto_1 = require("./dto/update-post.dto");
 let PostController = class PostController {
     constructor(postService) {
         this.postService = postService;
@@ -66,6 +67,7 @@ __decorate([
     (0, common_1.Post)(),
     (0, swagger_1.ApiResponse)({ status: 201, type: create_post_response_dto_1.CreatePostResponseDto }),
     (0, swagger_1.ApiOperation)({ summary: '게시물 생성' }),
+    (0, common_1.HttpCode)(201),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [create_post_dto_1.CreatePostDto]),
@@ -75,16 +77,18 @@ __decorate([
     (0, common_1.Patch)(':id'),
     (0, swagger_1.ApiResponse)({ status: 204 }),
     (0, swagger_1.ApiOperation)({ summary: 'postId로 게시물 수정' }),
+    (0, common_1.HttpCode)(204),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, create_post_dto_1.CreatePostDto]),
+    __metadata("design:paramtypes", [String, update_post_dto_1.UpdatePostDto]),
     __metadata("design:returntype", void 0)
 ], PostController.prototype, "updatePost", null);
 __decorate([
     (0, common_1.Delete)(':id'),
     (0, swagger_1.ApiResponse)({ status: 204 }),
     (0, swagger_1.ApiOperation)({ summary: 'postId로 게시물 삭제' }),
+    (0, common_1.HttpCode)(204),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [String]),

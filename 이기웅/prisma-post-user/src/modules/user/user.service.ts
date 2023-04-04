@@ -12,15 +12,18 @@ import { UserDto } from './dto/user.dto';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async checkNameDuplicated(name: string): Promise<UserDto> {
+  private async checkNameDuplicated(
+    name: string,
+    updateUserId?: string,
+  ): Promise<boolean> {
     const foundUserUsingName = await this.prisma.user.findFirst({
-      where: { name },
+      where: { name, NOT: { id: updateUserId } },
     });
 
     if (foundUserUsingName)
       throw new BadRequestException('이미 존재하는 이름입니다.');
 
-    return new UserDto(foundUserUsingName);
+    return false;
   }
 
   async getUser(id: string) {
@@ -49,14 +52,15 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    this.checkNameDuplicated(createUserDto.name);
+    await this.checkNameDuplicated(createUserDto.name);
 
     const createdUser = await this.prisma.user.create({ data: createUserDto });
     return { id: createdUser.id };
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
-    this.getUser(id);
+    await this.getUser(id);
+    await this.checkNameDuplicated(updateUserDto.name, id);
 
     await this.prisma.user.update({
       data: updateUserDto,
@@ -65,7 +69,7 @@ export class UserService {
   }
 
   async deleteUser(id: string) {
-    this.getUser(id);
+    await this.getUser(id);
 
     await this.prisma.user.delete({ where: { id } });
   }

@@ -19,6 +19,14 @@ let PostService = class PostService {
         this.prisma = prisma;
         this.userService = userService;
     }
+    async checkTitleDuplicated(title, updatePostId) {
+        const foundPostUsingTitle = await this.prisma.post.findFirst({
+            where: { title, NOT: { id: updatePostId } },
+        });
+        if (foundPostUsingTitle)
+            throw new common_1.BadRequestException('이미 존재하는 제목입니다.');
+        return false;
+    }
     async getPost(id) {
         const post = await this.prisma.post.findFirst({
             where: { id },
@@ -48,13 +56,15 @@ let PostService = class PostService {
     }
     async createPost(createPostDto) {
         await this.userService.getUser(createPostDto.userId);
+        await this.checkTitleDuplicated(createPostDto.title);
         const createdPost = await this.prisma.post.create({
             data: createPostDto,
         });
         return { id: createdPost.id };
     }
     async updatePost(id, updatePostDto) {
-        this.getPost(id);
+        await this.getPost(id);
+        await this.checkTitleDuplicated(updatePostDto.title, id);
         if (updatePostDto === null || updatePostDto === void 0 ? void 0 : updatePostDto.userId) {
             await this.userService.getUser(updatePostDto.userId);
         }
@@ -64,7 +74,7 @@ let PostService = class PostService {
         });
     }
     async deletePost(id) {
-        this.getPost(id);
+        await this.getPost(id);
         await this.prisma.post.delete({
             where: { id },
         });

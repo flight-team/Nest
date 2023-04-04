@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -13,6 +14,7 @@ import { PostDto } from './dto/post.dto';
 import { PostService } from './post.service';
 import { CreatePostResponseDto } from './dto/create-post-response.dto';
 import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @ApiTags('Post')
 @Controller('posts')
@@ -41,6 +43,7 @@ export class PostController {
   @Post()
   @ApiResponse({ status: 201, type: CreatePostResponseDto })
   @ApiOperation({ summary: '게시물 생성' })
+  @HttpCode(201)
   createPost(@Body() createPostDto: CreatePostDto) {
     return this.postService.createPost(createPostDto);
   }
@@ -48,13 +51,15 @@ export class PostController {
   @Patch(':id')
   @ApiResponse({ status: 204 })
   @ApiOperation({ summary: 'postId로 게시물 수정' })
-  updatePost(@Param('id') id: string, @Body() updatePostDto: CreatePostDto) {
+  @HttpCode(204)
+  updatePost(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
     return this.postService.updatePost(id, updatePostDto);
   }
 
   @Delete(':id')
   @ApiResponse({ status: 204 })
   @ApiOperation({ summary: 'postId로 게시물 삭제' })
+  @HttpCode(204)
   deletePost(@Param('id') id: string) {
     return this.postService.deletePost(id);
   }

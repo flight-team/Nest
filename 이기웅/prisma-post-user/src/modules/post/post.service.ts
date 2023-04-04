@@ -1,5 +1,9 @@
 import { PrismaService } from '@/database/prisma.service';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';
@@ -11,6 +15,20 @@ export class PostService {
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
   ) {}
+
+  private async checkTitleDuplicated(
+    title: string,
+    updatePostId?: string,
+  ): Promise<boolean> {
+    const foundPostUsingTitle = await this.prisma.post.findFirst({
+      where: { title, NOT: { id: updatePostId } },
+    });
+
+    if (foundPostUsingTitle)
+      throw new BadRequestException('이미 존재하는 제목입니다.');
+
+    return false;
+  }
 
   async getPost(id: string) {
     const post = await this.prisma.post.findFirst({
@@ -48,8 +66,7 @@ export class PostService {
 
   async createPost(createPostDto: CreatePostDto) {
     await this.userService.getUser(createPostDto.userId);
-    // NOTE: 토큰이 없으니... userId를 받아야겠지..?
-    // NOTE: content의 경우 nullable인데, 키값을 아예 안넣는 경우에도 처리되게 하는 커스텀 방법이 있나
+    await this.checkTitleDuplicated(createPostDto.title);
 
     const createdPost = await this.prisma.post.create({
       data: createPostDto,
@@ -59,7 +76,8 @@ export class PostService {
   }
 
   async updatePost(id: string, updatePostDto: UpdatePostDto) {
-    this.getPost(id);
+    await this.getPost(id);
+    await this.checkTitleDuplicated(updatePostDto.title, id);
 
     if (updatePostDto?.userId) {
       await this.userService.getUser(updatePostDto.userId);
@@ -72,7 +90,7 @@ export class PostService {
   }
 
   async deletePost(id: string) {
-    this.getPost(id);
+    await this.getPost(id);
 
     await this.prisma.post.delete({
       where: { id },
