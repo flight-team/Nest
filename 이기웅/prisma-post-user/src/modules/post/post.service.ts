@@ -46,7 +46,7 @@ export class PostService {
     return new PostDto(post);
   }
 
-  async getPosts(search?: string) {
+  async getPosts(search?: string, userId?: string) {
     const posts = await this.prisma.post.findMany({
       where: {
         title: {
@@ -54,6 +54,9 @@ export class PostService {
         },
         content: {
           contains: search,
+        },
+        userId: {
+          contains: userId,
         },
       },
       include: {

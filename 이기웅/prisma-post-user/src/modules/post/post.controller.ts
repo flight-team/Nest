@@ -36,8 +36,13 @@ export class PostController {
     required: false,
     description: '제목 or 내용 검색',
   })
-  getPosts(@Query('search') search?: string) {
-    return this.postService.getPosts(search);
+  @ApiQuery({
+    name: 'userId',
+    required: false,
+    description: '사용자 ID',
+  })
+  getPosts(@Query('search') search?: string, @Query('userId') userId?: string) {
+    return this.postService.getPosts(search, userId);
   }
 
   @Post()

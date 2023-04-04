@@ -6,7 +6,7 @@ export declare class PostController {
     private readonly postService;
     constructor(postService: PostService);
     getPost(id: string): Promise<PostDto>;
-    getPosts(search?: string): Promise<PostDto[]>;
+    getPosts(search?: string, userId?: string): Promise<PostDto[]>;
     createPost(createPostDto: CreatePostDto): Promise<{
         id: string;
     }>;

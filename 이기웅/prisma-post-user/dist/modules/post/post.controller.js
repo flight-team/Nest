@@ -27,8 +27,8 @@ let PostController = class PostController {
     getPost(id) {
         return this.postService.getPost(id);
     }
-    getPosts(search) {
-        return this.postService.getPosts(search);
+    getPosts(search, userId) {
+        return this.postService.getPosts(search, userId);
     }
     createPost(createPostDto) {
         return this.postService.createPost(createPostDto);
@@ -58,9 +58,15 @@ __decorate([
         required: false,
         description: '제목 or 내용 검색',
     }),
+    (0, swagger_1.ApiQuery)({
+        name: 'userId',
+        required: false,
+        description: '사용자 ID',
+    }),
     __param(0, (0, common_1.Query)('search')),
+    __param(1, (0, common_1.Query)('userId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, String]),
     __metadata("design:returntype", void 0)
 ], PostController.prototype, "getPosts", null);
 __decorate([
