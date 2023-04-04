@@ -12,20 +12,54 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserService = void 0;
 const prisma_service_1 = require("../../database/prisma.service");
 const common_1 = require("@nestjs/common");
+const user_dto_1 = require("./dto/user.dto");
+function exclude(user, keys) {
+    for (const key of keys) {
+        delete user[key];
+    }
+    return new user_dto_1.UserDto(user);
+}
 let UserService = class UserService {
     constructor(prisma) {
         this.prisma = prisma;
     }
-    getUsers() {
-        return this.prisma.user.findMany();
+    async checkNameDuplicated(name) {
+        const foundUserUsingName = await this.prisma.user.findFirst({
+            where: { name },
+        });
+        if (foundUserUsingName)
+            throw new common_1.BadRequestException('이미 존재하는 이름입니다.');
+        return exclude(foundUserUsingName, ['password']);
+    }
+    async getUser(id) {
+        const foundUser = await this.prisma.user.findFirst({
+            where: { id },
+        });
+        if (!foundUser)
+            throw new common_1.NotFoundException(`${id}에 해당하는 사용자가 존재하지 않습니다`);
+        return exclude(foundUser, ['password']);
+    }
+    async getUsers() {
+        const users = await this.prisma.user.findMany();
+        return users.map((user) => exclude(user, ['password']));
+    }
+    async createUser(createUserDto) {
+        this.checkNameDuplicated(createUserDto.name);
+        const createdUser = await this.prisma.user.create({ data: createUserDto });
+        return { id: createdUser.id };
+    }
+    async updateUser(id, updateUserDto) {
+        this.getUser(id);
+        await this.prisma.user.update({
+            data: updateUserDto,
+            where: { id },
+        });
+    }
+    async deleteUser(id) {
+        this.getUser(id);
+        await this.prisma.user.delete({ where: { id } });
     }
 };
-__decorate([
-    (0, common_1.Get)(),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
-    __metadata("design:returntype", void 0)
-], UserService.prototype, "getUsers", null);
 UserService = __decorate([
     (0, common_1.Injectable)(),
     __metadata("design:paramtypes", [prisma_service_1.PrismaService])

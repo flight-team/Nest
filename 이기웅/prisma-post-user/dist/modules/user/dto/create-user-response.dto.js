@@ -9,34 +9,13 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.User = void 0;
+exports.CreateUserResponseDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
-const class_transformer_1 = require("class-transformer");
-class User {
+class CreateUserResponseDto {
 }
 __decorate([
-    (0, swagger_1.ApiProperty)(),
+    (0, swagger_1.ApiProperty)({ type: 'string' }),
     __metadata("design:type", String)
-], User.prototype, "id", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", String)
-], User.prototype, "name", void 0);
-__decorate([
-    (0, class_transformer_1.Exclude)(),
-    __metadata("design:type", String)
-], User.prototype, "password", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Date)
-], User.prototype, "createdAt", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Date)
-], User.prototype, "updatedAt", void 0);
-__decorate([
-    (0, swagger_1.ApiProperty)(),
-    __metadata("design:type", Date)
-], User.prototype, "deletedAt", void 0);
-exports.User = User;
-//# sourceMappingURL=user.entity.js.map
+], CreateUserResponseDto.prototype, "id", void 0);
+exports.CreateUserResponseDto = CreateUserResponseDto;
+//# sourceMappingURL=create-user-response.dto.js.map

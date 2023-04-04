@@ -9,22 +9,32 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.CreateUserDto = void 0;
+exports.UserDto = void 0;
 const swagger_1 = require("@nestjs/swagger");
-const class_validator_1 = require("class-validator");
-class CreateUserDto {
+class UserDto {
+    constructor(args) {
+        Object.assign(this, args);
+    }
 }
 __decorate([
     (0, swagger_1.ApiProperty)({ type: 'string' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], CreateUserDto.prototype, "name", void 0);
+], UserDto.prototype, "id", void 0);
 __decorate([
     (0, swagger_1.ApiProperty)({ type: 'string' }),
-    (0, class_validator_1.IsString)(),
-    (0, class_validator_1.IsNotEmpty)(),
     __metadata("design:type", String)
-], CreateUserDto.prototype, "password", void 0);
-exports.CreateUserDto = CreateUserDto;
-//# sourceMappingURL=create-user.dto.js.map
+], UserDto.prototype, "name", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Date }),
+    __metadata("design:type", Date)
+], UserDto.prototype, "createdAt", void 0);
+__decorate([
+    (0, swagger_1.ApiProperty)({ type: Date }),
+    __metadata("design:type", Date)
+], UserDto.prototype, "updatedAt", void 0);
+__decorate([
+    (0, swagger_1.ApiPropertyOptional)({ type: Date }),
+    __metadata("design:type", Date)
+], UserDto.prototype, "deletedAt", void 0);
+exports.UserDto = UserDto;
+//# sourceMappingURL=user.dto.js.map

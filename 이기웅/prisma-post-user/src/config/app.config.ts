@@ -5,7 +5,6 @@ export function setupApp(app: INestApplication): void {
     new ValidationPipe({
       transform: true,
       whitelist: true,
-      exceptionFactory: (errors) => {},
     }),
   );
 }

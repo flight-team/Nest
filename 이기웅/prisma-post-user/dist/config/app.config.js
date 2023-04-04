@@ -6,7 +6,6 @@ function setupApp(app) {
     app.useGlobalPipes(new common_1.ValidationPipe({
         transform: true,
         whitelist: true,
-        exceptionFactory: (errors) => { },
     }));
 }
 exports.setupApp = setupApp;

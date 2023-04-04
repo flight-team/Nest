@@ -11,8 +11,6 @@ import { Response } from 'express';
 @ApiTags('Health Check')
 @Controller()
 export class AppController {
-  constructor() {}
-
   @Get()
   @ApiExcludeEndpoint()
   redirectSwagger(@Res() res: Response): void {

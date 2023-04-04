@@ -16,7 +16,6 @@ exports.AppController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
 let AppController = class AppController {
-    constructor() { }
     redirectSwagger(res) {
         res.redirect('/api');
     }
@@ -42,8 +41,7 @@ __decorate([
 ], AppController.prototype, "healthCheck", null);
 AppController = __decorate([
     (0, swagger_1.ApiTags)('Health Check'),
-    (0, common_1.Controller)(),
-    __metadata("design:paramtypes", [])
+    (0, common_1.Controller)()
 ], AppController);
 exports.AppController = AppController;
 //# sourceMappingURL=app.controller.js.map
