@@ -5,11 +5,11 @@ import { UserService } from './user.service';
 export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
-    getUser(userId: string): Promise<UserDto>;
+    getUser(id: string): Promise<UserDto>;
     getUsers(search?: string): Promise<UserDto[]>;
     createUser(createUserDto: CreateUserDto): Promise<{
         id: string;
     }>;
-    updateUser(userId: string, updateUserDto: UpdateUserDto): Promise<void>;
-    deleteUser(userId: string): Promise<void>;
+    updateUser(id: string, updateUserDto: UpdateUserDto): Promise<void>;
+    deleteUser(id: string): Promise<void>;
 }

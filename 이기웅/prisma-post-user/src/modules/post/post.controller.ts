@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PostDto } from './dto/post.dto';
 import { PostService } from './post.service';
@@ -10,10 +19,12 @@ import { CreatePostDto } from './dto/create-post.dto';
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  // @Get(':postId')
-  // getPost(@Param('postId') postId: string) {
-  //   return this.postService.getPost(postId);
-  // }
+  @Get(':id')
+  @ApiResponse({ status: 200, type: PostDto })
+  @ApiOperation({ summary: 'postId로 게시물 조회' })
+  getPost(@Param('id') id: string) {
+    return this.postService.getPost(id);
+  }
 
   @Get()
   @ApiResponse({ status: 200, type: [PostDto] })
@@ -32,5 +43,19 @@ export class PostController {
   @ApiOperation({ summary: '게시물 생성' })
   createPost(@Body() createPostDto: CreatePostDto) {
     return this.postService.createPost(createPostDto);
+  }
+
+  @Patch(':id')
+  @ApiResponse({ status: 204 })
+  @ApiOperation({ summary: 'postId로 게시물 수정' })
+  updatePost(@Param('id') id: string, @Body() updatePostDto: CreatePostDto) {
+    return this.postService.updatePost(id, updatePostDto);
+  }
+
+  @Delete(':id')
+  @ApiResponse({ status: 204 })
+  @ApiOperation({ summary: 'postId로 게시물 삭제' })
+  deletePost(@Param('id') id: string) {
+    return this.postService.deletePost(id);
   }
 }

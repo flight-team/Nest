@@ -1,9 +1,9 @@
 import { PrismaService } from '@/database/prisma.service';
-import { Injectable } from '@nestjs/common';
-import { PostDto } from './dto/post.dto';
-import { CreatePostDto } from './dto/create-post.dto';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import { UserDto } from '../user/dto/user.dto';
+import { CreatePostDto } from './dto/create-post.dto';
+import { PostDto } from './dto/post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 
 @Injectable()
 export class PostService {
@@ -12,7 +12,21 @@ export class PostService {
     private readonly userService: UserService,
   ) {}
 
-  async getPost() {}
+  async getPost(id: string) {
+    const post = await this.prisma.post.findFirst({
+      where: { id },
+      include: {
+        User: true,
+      },
+    });
+
+    if (!post)
+      throw new NotFoundException(
+        `${id}에 해당하는 게시물이 존재하지 않습니다.`,
+      );
+
+    return new PostDto(post);
+  }
 
   async getPosts(search?: string) {
     const posts = await this.prisma.post.findMany({
@@ -42,5 +56,26 @@ export class PostService {
     });
 
     return { id: createdPost.id };
+  }
+
+  async updatePost(id: string, updatePostDto: UpdatePostDto) {
+    this.getPost(id);
+
+    if (updatePostDto?.userId) {
+      await this.userService.getUser(updatePostDto.userId);
+    }
+
+    await this.prisma.post.update({
+      where: { id },
+      data: updatePostDto,
+    });
+  }
+
+  async deletePost(id: string) {
+    this.getPost(id);
+
+    await this.prisma.post.delete({
+      where: { id },
+    });
   }
 }

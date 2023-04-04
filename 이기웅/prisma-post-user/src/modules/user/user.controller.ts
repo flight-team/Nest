@@ -21,11 +21,11 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get(':userId')
+  @Get(':id')
   @ApiResponse({ status: 200, type: UserDto })
   @ApiOperation({ summary: 'userId로 사용자 조회' })
-  async getUser(@Param('userId') userId: string) {
-    return await this.userService.getUser(userId);
+  async getUser(@Param('id') id: string) {
+    return await this.userService.getUser(id);
   }
 
   @Get()
@@ -47,22 +47,22 @@ export class UserController {
     return await this.userService.createUser(createUserDto);
   }
 
-  @Patch(':userId')
+  @Patch(':id')
   @ApiOperation({ summary: 'userId로 사용자 수정' })
   @ApiResponse({ status: 204 })
   @HttpCode(204)
   async updateUser(
-    @Param('userId') userId: string,
+    @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return await this.userService.updateUser(userId, updateUserDto);
+    return await this.userService.updateUser(id, updateUserDto);
   }
 
-  @Delete(':userId')
+  @Delete(':id')
   @ApiOperation({ summary: 'userId로 사용자 삭제' })
   @ApiResponse({ status: 204 })
   @HttpCode(204)
-  async deleteUser(@Param('userId') userId: string) {
-    return await this.userService.deleteUser(userId);
+  async deleteUser(@Param('id') id: string) {
+    return await this.userService.deleteUser(id);
   }
 }
