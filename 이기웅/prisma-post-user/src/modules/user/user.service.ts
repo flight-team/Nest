@@ -46,8 +46,15 @@ export class UserService {
     return exclude(foundUser, ['password']);
   }
 
-  async getUsers() {
-    const users = await this.prisma.user.findMany();
+  async getUsers(searchName?: string) {
+    const users = await this.prisma.user.findMany({
+      where: {
+        name: {
+          contains: searchName,
+        },
+      },
+    });
+
     return users.map((user) => exclude(user, ['password']));
   }
 

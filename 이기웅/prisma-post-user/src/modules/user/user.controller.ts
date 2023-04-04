@@ -7,13 +7,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { CreateUserResponseDto } from './dto/create-user-response.dto';
+import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { CreateUserResponseDto } from './dto/create-user-response.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('users')
 @ApiTags('User')
@@ -30,8 +31,14 @@ export class UserController {
   @Get()
   @ApiOperation({ summary: '사용자 전체 조회' })
   @ApiResponse({ status: 200, type: [UserDto] })
-  async getUsers() {
-    return await this.userService.getUsers();
+  @ApiQuery({
+    name: 'searchName',
+    required: false,
+    description: '검색할 이름',
+    example: '홍길동',
+  })
+  async getUsers(@Query('searchName') searchName?: string) {
+    return await this.userService.getUsers(searchName);
   }
 
   @Post()

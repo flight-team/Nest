@@ -7,7 +7,7 @@ export declare class UserService {
     constructor(prisma: PrismaService);
     private checkNameDuplicated;
     getUser(id: string): Promise<UserDto>;
-    getUsers(): Promise<UserDto[]>;
+    getUsers(searchName?: string): Promise<UserDto[]>;
     createUser(createUserDto: CreateUserDto): Promise<{
         id: string;
     }>;

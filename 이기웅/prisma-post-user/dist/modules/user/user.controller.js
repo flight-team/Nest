@@ -27,8 +27,8 @@ let UserController = class UserController {
     async getUser(userId) {
         return await this.userService.getUser(userId);
     }
-    async getUsers() {
-        return await this.userService.getUsers();
+    async getUsers(searchName) {
+        return await this.userService.getUsers(searchName);
     }
     async createUser(createUserDto) {
         return await this.userService.createUser(createUserDto);
@@ -53,8 +53,15 @@ __decorate([
     (0, common_1.Get)(),
     (0, swagger_1.ApiOperation)({ summary: '사용자 전체 조회' }),
     (0, swagger_1.ApiResponse)({ status: 200, type: [user_dto_1.UserDto] }),
+    (0, swagger_1.ApiQuery)({
+        name: 'searchName',
+        required: false,
+        description: '검색할 이름',
+        example: '홍길동',
+    }),
+    __param(0, (0, common_1.Query)('searchName')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", []),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "getUsers", null);
 __decorate([

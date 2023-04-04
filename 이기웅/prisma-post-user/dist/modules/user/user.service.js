@@ -39,8 +39,14 @@ let UserService = class UserService {
             throw new common_1.NotFoundException(`${id}에 해당하는 사용자가 존재하지 않습니다`);
         return exclude(foundUser, ['password']);
     }
-    async getUsers() {
-        const users = await this.prisma.user.findMany();
+    async getUsers(searchName) {
+        const users = await this.prisma.user.findMany({
+            where: {
+                name: {
+                    contains: searchName,
+                },
+            },
+        });
         return users.map((user) => exclude(user, ['password']));
     }
     async createUser(createUserDto) {
