@@ -15,7 +15,7 @@ const common_1 = require("@nestjs/common");
 const user_dto_1 = require("./dto/user.dto");
 function exclude(user, keys) {
     for (const key of keys) {
-        delete user[key];
+        user === null || user === void 0 ? true : delete user[key];
     }
     return new user_dto_1.UserDto(user);
 }

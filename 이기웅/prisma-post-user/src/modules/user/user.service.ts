@@ -12,7 +12,7 @@ import { User } from '@prisma/client';
 
 function exclude(user: User, keys: (keyof User)[]): UserDto {
   for (const key of keys) {
-    delete user[key];
+    delete user?.[key];
   }
 
   return new UserDto(user);

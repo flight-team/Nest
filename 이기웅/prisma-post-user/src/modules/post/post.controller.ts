@@ -1,44 +1,36 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PostDto } from './dto/post.dto';
 import { PostService } from './post.service';
+import { CreatePostResponseDto } from './dto/create-post-response.dto';
 import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
-import { ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Post')
 @Controller('posts')
 export class PostController {
   constructor(private readonly postService: PostService) {}
 
-  @Post()
-  create(@Body() createPostDto: CreatePostDto) {
-    return this.postService.create(createPostDto);
-  }
+  // @Get(':postId')
+  // getPost(@Param('postId') postId: string) {
+  //   return this.postService.getPost(postId);
+  // }
 
   @Get()
-  findAll() {
-    return this.postService.findAll();
+  @ApiResponse({ status: 200, type: [PostDto] })
+  @ApiOperation({ summary: '게시물 전체 조회' })
+  @ApiQuery({
+    name: 'search',
+    required: false,
+    description: '제목 or 내용 검색',
+  })
+  getPosts(@Query('search') search?: string) {
+    return this.postService.getPosts(search);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.postService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePostDto: UpdatePostDto) {
-    return this.postService.update(+id, updatePostDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.postService.remove(+id);
+  @Post()
+  @ApiResponse({ status: 201, type: CreatePostResponseDto })
+  @ApiOperation({ summary: '게시물 생성' })
+  createPost(@Body() createPostDto: CreatePostDto) {
+    return this.postService.createPost(createPostDto);
   }
 }
