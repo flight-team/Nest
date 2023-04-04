@@ -35,7 +35,6 @@ export class UserController {
     name: 'searchName',
     required: false,
     description: '검색할 이름',
-    example: '홍길동',
   })
   async getUsers(@Query('searchName') searchName?: string) {
     return await this.userService.getUsers(searchName);

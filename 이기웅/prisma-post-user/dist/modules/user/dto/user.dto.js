@@ -25,6 +25,10 @@ __decorate([
     __metadata("design:type", String)
 ], UserDto.prototype, "name", void 0);
 __decorate([
+    (0, swagger_1.ApiHideProperty)(),
+    __metadata("design:type", String)
+], UserDto.prototype, "password", void 0);
+__decorate([
     (0, swagger_1.ApiProperty)({ type: Date }),
     __metadata("design:type", Date)
 ], UserDto.prototype, "createdAt", void 0);

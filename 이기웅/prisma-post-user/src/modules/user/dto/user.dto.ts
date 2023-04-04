@@ -1,4 +1,8 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import {
+  ApiHideProperty,
+  ApiProperty,
+  ApiPropertyOptional,
+} from '@nestjs/swagger';
 
 export class UserDto {
   @ApiProperty({ type: 'string' })
@@ -6,6 +10,9 @@ export class UserDto {
 
   @ApiProperty({ type: 'string' })
   name: string;
+
+  @ApiHideProperty()
+  password: string;
 
   @ApiProperty({ type: Date })
   createdAt: Date;

@@ -15,11 +15,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const swagger_1 = require("@nestjs/swagger");
+const create_user_response_dto_1 = require("./dto/create-user-response.dto");
+const create_user_dto_1 = require("./dto/create-user.dto");
+const update_user_dto_1 = require("./dto/update-user.dto");
 const user_dto_1 = require("./dto/user.dto");
 const user_service_1 = require("./user.service");
-const create_user_dto_1 = require("./dto/create-user.dto");
-const create_user_response_dto_1 = require("./dto/create-user-response.dto");
-const update_user_dto_1 = require("./dto/update-user.dto");
 let UserController = class UserController {
     constructor(userService) {
         this.userService = userService;
@@ -57,7 +57,6 @@ __decorate([
         name: 'searchName',
         required: false,
         description: '검색할 이름',
-        example: '홍길동',
     }),
     __param(0, (0, common_1.Query)('searchName')),
     __metadata("design:type", Function),

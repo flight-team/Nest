@@ -75,7 +75,7 @@ __decorate([
 ], PostController.prototype, "remove", null);
 PostController = __decorate([
     (0, swagger_1.ApiTags)('Post'),
-    (0, common_1.Controller)('post'),
+    (0, common_1.Controller)('posts'),
     __metadata("design:paramtypes", [post_service_1.PostService])
 ], PostController);
 exports.PostController = PostController;
