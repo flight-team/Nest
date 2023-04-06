@@ -39,6 +39,8 @@ let PostService = class PostService {
         return new post_dto_1.PostDto(post);
     }
     async getPosts(title, content, userId) {
+        if (userId)
+            this.userService.getUser(userId);
         const posts = await this.prisma.post.findMany({
             where: Object.assign(Object.assign(Object.assign({}, (!!title && {
                 title: {
