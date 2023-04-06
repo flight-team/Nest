@@ -32,17 +32,26 @@ export class PostController {
   @ApiResponse({ status: 200, type: [PostDto] })
   @ApiOperation({ summary: '게시물 전체 조회' })
   @ApiQuery({
-    name: 'search',
+    name: 'title',
     required: false,
-    description: '제목 or 내용 검색',
+    description: '제목 검색',
+  })
+  @ApiQuery({
+    name: 'content',
+    required: false,
+    description: '내용 검색',
   })
   @ApiQuery({
     name: 'userId',
     required: false,
     description: '사용자 ID',
   })
-  getPosts(@Query('search') search?: string, @Query('userId') userId?: string) {
-    return this.postService.getPosts(search, userId);
+  getPosts(
+    @Query('title') title?: string,
+    @Query('content') content?: string,
+    @Query('userId') userId?: string,
+  ) {
+    return this.postService.getPosts(title, content, userId);
   }
 
   @Post()

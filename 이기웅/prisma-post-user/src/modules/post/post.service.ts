@@ -46,18 +46,21 @@ export class PostService {
     return new PostDto(post);
   }
 
-  async getPosts(search?: string, userId?: string) {
+  // NOTE: 다른 방식 어떻게 사용하면 되는지?
+  async getPosts(title?: string, content?: string, userId?: string) {
     const posts = await this.prisma.post.findMany({
       where: {
-        title: {
-          contains: search,
-        },
-        content: {
-          contains: search,
-        },
-        userId: {
-          contains: userId,
-        },
+        ...(!!title && {
+          title: {
+            contains: title,
+          },
+        }),
+        ...(!!content && {
+          content: {
+            contains: content,
+          },
+        }),
+        ...(userId && { userId }),
       },
       include: {
         User: true,

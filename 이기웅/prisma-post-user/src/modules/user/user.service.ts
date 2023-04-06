@@ -39,12 +39,14 @@ export class UserService {
     return new UserDto(foundUser);
   }
 
-  async getUsers(searchName?: string) {
+  async getUsers(name?: string) {
     const users = await this.prisma.user.findMany({
       where: {
-        name: {
-          contains: searchName,
-        },
+        ...(!!name && {
+          name: {
+            contains: name,
+          },
+        }),
       },
     });
 

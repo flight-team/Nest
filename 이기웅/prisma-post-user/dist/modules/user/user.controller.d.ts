@@ -6,7 +6,7 @@ export declare class UserController {
     private readonly userService;
     constructor(userService: UserService);
     getUser(id: string): Promise<UserDto>;
-    getUsers(search?: string): Promise<UserDto[]>;
+    getUsers(name?: string): Promise<UserDto[]>;
     createUser(createUserDto: CreateUserDto): Promise<{
         id: string;
     }>;

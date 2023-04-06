@@ -38,19 +38,17 @@ let PostService = class PostService {
             throw new common_1.NotFoundException(`${id}에 해당하는 게시물이 존재하지 않습니다.`);
         return new post_dto_1.PostDto(post);
     }
-    async getPosts(search, userId) {
+    async getPosts(title, content, userId) {
         const posts = await this.prisma.post.findMany({
-            where: {
+            where: Object.assign(Object.assign(Object.assign({}, (!!title && {
                 title: {
-                    contains: search,
+                    contains: title,
                 },
+            })), (!!content && {
                 content: {
-                    contains: search,
+                    contains: content,
                 },
-                userId: {
-                    contains: userId,
-                },
-            },
+            })), (userId && { userId })),
             include: {
                 User: true,
             },

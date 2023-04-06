@@ -32,12 +32,12 @@ export class UserController {
   @ApiOperation({ summary: '사용자 전체 조회' })
   @ApiResponse({ status: 200, type: [UserDto] })
   @ApiQuery({
-    name: 'search',
+    name: 'name',
     required: false,
     description: '검색할 이름',
   })
-  async getUsers(@Query('search') search?: string) {
-    return await this.userService.getUsers(search);
+  async getUsers(@Query('name') name?: string) {
+    return await this.userService.getUsers(name);
   }
 
   @Post()

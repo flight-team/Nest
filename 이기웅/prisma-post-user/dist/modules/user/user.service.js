@@ -33,13 +33,13 @@ let UserService = class UserService {
             throw new common_1.NotFoundException(`${id}에 해당하는 사용자가 존재하지 않습니다`);
         return new user_dto_1.UserDto(foundUser);
     }
-    async getUsers(searchName) {
+    async getUsers(name) {
         const users = await this.prisma.user.findMany({
-            where: {
+            where: Object.assign({}, (!!name && {
                 name: {
-                    contains: searchName,
+                    contains: name,
                 },
-            },
+            })),
         });
         return users.map((user) => new user_dto_1.UserDto(user));
     }
