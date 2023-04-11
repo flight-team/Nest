@@ -1,3 +1,4 @@
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '@/database/prisma.service';
 import {
   BadRequestException,
@@ -46,27 +47,25 @@ export class PostService {
     return new PostDto(post);
   }
 
-  // NOTE: 다른 방식 어떻게 사용하면 되는지?
-  async getPosts(title?: string, content?: string, userId?: string) {
-    if (userId) this.userService.getUser(userId);
+  async getPosts(searchKey?: string, userId?: string) {
+    if (userId) await this.userService.getUser(userId);
 
     const posts = await this.prisma.post.findMany({
       where: {
-        ...(!!title && {
-          title: {
-            contains: title,
+        OR: [
+          {
+            title: {
+              contains: searchKey,
+            },
           },
-        }),
-        ...(!!content && {
-          content: {
-            contains: content,
+          {
+            content: {
+              contains: searchKey,
+            },
           },
-        }),
-        ...(userId && { userId }),
+        ],
       },
-      include: {
-        User: true,
-      },
+      include: { User: true },
     });
 
     return posts.map((post) => new PostDto(post));

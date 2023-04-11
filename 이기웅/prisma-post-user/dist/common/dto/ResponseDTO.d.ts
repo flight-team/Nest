@@ -1,2 +1,0 @@
-declare class ResponseDTO<T> {
-}
