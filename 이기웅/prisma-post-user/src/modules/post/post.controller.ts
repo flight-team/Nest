@@ -47,11 +47,10 @@ export class PostController {
     description: '사용자 ID',
   })
   getPosts(
-    @Query('title') title?: string,
-    @Query('content') content?: string,
+    @Query('searchKey') searchKey?: string,
     @Query('userId') userId?: string,
   ) {
-    return this.postService.getPosts(title, content, userId);
+    return this.postService.getPosts(searchKey, userId);
   }
 
   @Post()
