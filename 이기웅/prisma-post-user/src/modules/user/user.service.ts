@@ -7,6 +7,7 @@ import {
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -37,15 +38,8 @@ export class UserService {
     return new UserDto(foundUser);
   }
 
-  async getUsers(name?: string) {
-    const users = await this.prisma.user.findMany({
-      where: {
-        name: {
-          contains: name,
-        },
-      },
-    });
-
+  async getUsers(args = {} as Prisma.UserFindManyArgs) {
+    const users = await this.prisma.user.findMany(args);
     return users.map((user) => new UserDto(user));
   }
 

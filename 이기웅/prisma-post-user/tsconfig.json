@@ -20,7 +20,8 @@
     "paths": {
       "@/modules/*": ["./src/modules/*"],
       "@/config/*": ["./src/config/*"],
-      "@/database/*": ["./src/database/*"]
+      "@/database/*": ["./src/database/*"],
+      "@/common/*": ["./src/common/*"]
     }
   }
 }

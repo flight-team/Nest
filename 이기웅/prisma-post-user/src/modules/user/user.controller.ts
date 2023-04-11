@@ -15,6 +15,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
+import { Prisma } from '@prisma/client';
+import { GetUsersQueryDto } from './dto/get-users-query.dto';
 
 @Controller('users')
 @ApiTags('User')
@@ -31,13 +33,14 @@ export class UserController {
   @Get()
   @ApiOperation({ summary: '사용자 전체 조회' })
   @ApiResponse({ status: 200, type: [UserDto] })
-  @ApiQuery({
-    name: 'name',
-    required: false,
-    description: '검색할 이름',
-  })
-  async getUsers(@Query('name') name?: string) {
-    return await this.userService.getUsers(name);
+  async getUsers(@Query() query: GetUsersQueryDto) {
+    return await this.userService.getUsers({
+      where: {
+        name: {
+          contains: query.name,
+        },
+      },
+    });
   }
 
   @Post()
