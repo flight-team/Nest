@@ -22,7 +22,7 @@ export class PostDto {
   @ApiProperty({ type: Date })
   updatedAt: Date;
 
-  @ApiPropertyOptional({ type: UserDto })
+  @ApiProperty({ type: UserDto })
   user?: UserDto;
 
   constructor(args: PostDtoArgs) {
@@ -31,8 +31,6 @@ export class PostDto {
     this.content = args.content;
     this.createdAt = args.createdAt;
     this.updatedAt = args.updatedAt;
-    if (args?.user) {
-      this.user = new UserDto(args?.user);
-    }
+    this.user = new UserDto(args?.user);
   }
 }

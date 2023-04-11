@@ -8,15 +8,21 @@ import {
   Patch,
   Post,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ResponseInterceptor,
+  ResponseWithIdInterceptor,
+} from 'src/interceptors';
 import { CreateUserResponseDto } from './dto/create-user-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
+import { GetUsersQueryDto } from './dto/get-users-query.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
-import { Prisma } from '@prisma/client';
-import { GetUsersQueryDto } from './dto/get-users-query.dto';
+
+import { ApiResponseArrayDto, ApiResponseDto } from '@/common/dto';
 
 @Controller('users')
 @ApiTags('User')
@@ -24,15 +30,17 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get(':id')
-  @ApiResponse({ status: 200, type: UserDto })
+  @ApiResponseDto(UserDto)
   @ApiOperation({ summary: 'userId로 사용자 조회' })
+  @UseInterceptors(ResponseInterceptor)
   async getUser(@Param('id') id: string) {
     return await this.userService.getUser(id);
   }
 
   @Get()
   @ApiOperation({ summary: '사용자 전체 조회' })
-  @ApiResponse({ status: 200, type: [UserDto] })
+  @ApiResponseArrayDto(UserDto)
+  @UseInterceptors(ResponseInterceptor)
   async getUsers(@Query() query: GetUsersQueryDto) {
     return await this.userService.getUsers({
       where: {
@@ -46,6 +54,7 @@ export class UserController {
   @Post()
   @ApiOperation({ summary: '사용자 생성' })
   @ApiResponse({ status: 201, type: CreateUserResponseDto })
+  @UseInterceptors(ResponseWithIdInterceptor)
   async createUser(@Body() createUserDto: CreateUserDto) {
     return await this.userService.createUser(createUserDto);
   }

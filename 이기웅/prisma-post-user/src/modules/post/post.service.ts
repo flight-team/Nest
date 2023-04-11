@@ -46,7 +46,11 @@ export class PostService {
   }
 
   async getPosts(args = {} as Prisma.PostFindManyArgs) {
-    const posts = await this.prisma.post.findMany(args);
+    const posts = await this.prisma.post.findMany({
+      ...args,
+      include: { user: true },
+    });
+
     return posts.map((post) => new PostDto(post));
   }
 

@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Query,
+  UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../user/user.service';
@@ -17,6 +18,11 @@ import { GetPostsQueryDto } from './dto/get-posts-query.dto';
 import { PostDto } from './dto/post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostService } from './post.service';
+import {
+  ResponseInterceptor,
+  ResponseWithIdInterceptor,
+} from 'src/interceptors';
+import { ApiResponseArrayDto, ApiResponseDto } from '@/common/dto';
 
 @ApiTags('Post')
 @Controller('posts')
@@ -27,16 +33,18 @@ export class PostController {
   ) {}
 
   @Get(':id')
-  @ApiResponse({ status: 200, type: PostDto })
+  @ApiResponseDto(PostDto)
   @ApiOperation({ summary: 'postId로 게시물 조회' })
+  @UseInterceptors(ResponseInterceptor)
   async getPost(@Param('id') id: string) {
     return await this.postService.getPost(id);
   }
 
   // NOTE: 이거 query 안보내면 작동을 안하는데 왜인지 전혀 모르겠는 1인
   @Get()
-  @ApiResponse({ status: 200, type: [PostDto] })
+  @ApiResponseArrayDto(PostDto)
   @ApiOperation({ summary: '게시물 전체 조회' })
+  @UseInterceptors(ResponseInterceptor)
   async getPosts(@Query() query: GetPostsQueryDto) {
     if (query.userId) await this.userService.getUser(query.userId);
 
@@ -58,13 +66,13 @@ export class PostController {
           },
         ],
       },
-      include: { user: true },
     });
   }
 
   @Post()
   @ApiResponse({ status: 201, type: CreatePostResponseDto })
   @ApiOperation({ summary: '게시물 생성' })
+  @UseInterceptors(ResponseWithIdInterceptor)
   @HttpCode(201)
   async createPost(@Body() createPostDto: CreatePostDto) {
     return await this.postService.createPost(createPostDto);

@@ -1,1 +1,0 @@
-class ResponseDTO<T> {}
