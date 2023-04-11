@@ -1,7 +1,13 @@
 import { Type, applyDecorators } from '@nestjs/common';
-import { ApiExtraModels, ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
+import {
+  ApiExtraModels,
+  ApiOkResponse,
+  ApiProperty,
+  getSchemaPath,
+} from '@nestjs/swagger';
 
 export class ResponseDto<T> {
+  @ApiProperty()
   data: T;
 }
 

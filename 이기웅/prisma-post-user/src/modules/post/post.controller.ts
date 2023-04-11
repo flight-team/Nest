@@ -40,7 +40,6 @@ export class PostController {
     return await this.postService.getPost(id);
   }
 
-  // NOTE: 이거 query 안보내면 작동을 안하는데 왜인지 전혀 모르겠는 1인
   @Get()
   @ApiResponseArrayDto(PostDto)
   @ApiOperation({ summary: '게시물 전체 조회' })
@@ -50,21 +49,15 @@ export class PostController {
 
     return await this.postService.getPosts({
       where: {
-        OR: [
-          {
-            title: {
-              contains: query.title,
-            },
-          },
-          {
-            content: {
-              contains: query.content,
-            },
-          },
-          {
-            userId: query.userId,
-          },
-        ],
+        title: {
+          contains: query.title,
+        },
+        content: {
+          contains: query.content,
+        },
+        userId: {
+          contains: query.userId,
+        },
       },
     });
   }
