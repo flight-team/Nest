@@ -20,9 +20,7 @@ export class UserService {
       where: { name, NOT: { id: updateUserId } },
     });
 
-    if (foundUserUsingName)
-      throw new BadRequestException('이미 존재하는 이름입니다.');
-
+    if (foundUserUsingName) return true;
     return false;
   }
 
@@ -42,11 +40,9 @@ export class UserService {
   async getUsers(name?: string) {
     const users = await this.prisma.user.findMany({
       where: {
-        ...(!!name && {
-          name: {
-            contains: name,
-          },
-        }),
+        name: {
+          contains: name,
+        },
       },
     });
 
@@ -54,7 +50,8 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    await this.checkNameDuplicated(createUserDto.name);
+    const isDuplicated = await this.checkNameDuplicated(createUserDto.name);
+    if (isDuplicated) throw new BadRequestException('이미 존재하는 이름입니다');
 
     const createdUser = await this.prisma.user.create({ data: createUserDto });
     return { id: createdUser.id };
@@ -62,7 +59,8 @@ export class UserService {
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
     await this.getUser(id);
-    await this.checkNameDuplicated(updateUserDto.name, id);
+    const isDuplicated = await this.checkNameDuplicated(updateUserDto.name, id);
+    if (isDuplicated) throw new BadRequestException('이미 존재하는 이름입니다');
 
     await this.prisma.user.update({
       data: updateUserDto,

@@ -25,9 +25,7 @@ export class PostService {
       where: { title, NOT: { id: updatePostId } },
     });
 
-    if (foundPostUsingTitle)
-      throw new BadRequestException('이미 존재하는 제목입니다.');
-
+    if (foundPostUsingTitle) return true;
     return false;
   }
 
@@ -35,7 +33,7 @@ export class PostService {
     const post = await this.prisma.post.findFirst({
       where: { id },
       include: {
-        User: true,
+        user: true,
       },
     });
 
@@ -65,7 +63,7 @@ export class PostService {
           },
         ],
       },
-      include: { User: true },
+      include: { user: true },
     });
 
     return posts.map((post) => new PostDto(post));
@@ -73,7 +71,8 @@ export class PostService {
 
   async createPost(createPostDto: CreatePostDto) {
     await this.userService.getUser(createPostDto.userId);
-    await this.checkTitleDuplicated(createPostDto.title);
+    const isDuplicated = await this.checkTitleDuplicated(createPostDto.title);
+    if (isDuplicated) throw new BadRequestException('이미 존재하는 제목입니다');
 
     const createdPost = await this.prisma.post.create({
       data: createPostDto,
@@ -84,7 +83,11 @@ export class PostService {
 
   async updatePost(id: string, updatePostDto: UpdatePostDto) {
     await this.getPost(id);
-    await this.checkTitleDuplicated(updatePostDto.title, id);
+    const isDuplicated = await this.checkTitleDuplicated(
+      updatePostDto.title,
+      id,
+    );
+    if (isDuplicated) throw new BadRequestException('이미 존재하는 제목입니다');
 
     if (updatePostDto?.userId) {
       await this.userService.getUser(updatePostDto.userId);
