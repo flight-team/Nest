@@ -14,7 +14,7 @@ import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import {
   ResponseInterceptor,
   ResponseWithIdInterceptor,
-} from 'src/interceptors';
+} from '@/common/interceptors';
 import { CreateUserResponseDto } from './dto/create-user-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetUsersQueryDto } from './dto/get-users-query.dto';

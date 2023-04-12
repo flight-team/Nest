@@ -7,6 +7,9 @@ class EnvironmentVariables {
 
   @IsString()
   DATABASE_URL: string;
+
+  @IsNumber()
+  SALT: number;
 }
 
 export function validate(config: Record<string, unknown>) {

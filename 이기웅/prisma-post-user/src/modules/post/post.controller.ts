@@ -21,7 +21,7 @@ import { PostService } from './post.service';
 import {
   ResponseInterceptor,
   ResponseWithIdInterceptor,
-} from 'src/interceptors';
+} from '@/common/interceptors';
 import { ApiResponseArrayDto, ApiResponseDto } from '@/common/dto';
 
 @ApiTags('Post')
