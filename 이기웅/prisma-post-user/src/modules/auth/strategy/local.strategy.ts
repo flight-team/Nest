@@ -1,17 +1,20 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy } from 'passport-local';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth.service';
+import { UserDetailDto } from '@/modules/user/dto/user-detail.dto';
 
 @Injectable()
-export class LocalStrategy extends PassportStrategy(Strategy) {
+export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
   constructor(private readonly authService: AuthService) {
-    super();
+    super({
+      usernameField: 'name',
+      passwordField: 'password',
+      passReqToCallback: false,
+    });
   }
 
-  // TODO: authService에서 validate 구현
-  // MEMO: 이것이 passport 전략에서의 verify 콜백을 구현하는 것이라고 생각하면 되겠다.
-  async validate(name: string, password: string) {
+  async validate(name: string, password: string): Promise<UserDetailDto> {
     const user = await this.authService.validateUser(name, password);
 
     if (!user) {

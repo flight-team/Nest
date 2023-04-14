@@ -1,8 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Role } from '@prisma/client';
 import { IsString } from 'class-validator';
 
-export class RegisterBodyDto {
+export class AuthBodyDto {
   @ApiProperty({ type: 'string' })
   @IsString()
   name: string;

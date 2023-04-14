@@ -16,13 +16,20 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { RoleDto } from './dto/role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RoleService } from './role.service';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('admin/roles')
 @ApiTags('[ADMIN] Role')
@@ -38,8 +45,10 @@ export class RoleController {
   }
 
   @Get()
+  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '권한 전체 조회' })
   @ApiResponseArrayDto(RoleDto)
+  @ApiBearerAuth('accessToken')
   @UseInterceptors(ResponseInterceptor)
   async getRoles() {
     return await this.roleService.getRoles();

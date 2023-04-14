@@ -6,6 +6,10 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('Post User Swagger API')
     .setDescription('프리즈마')
     .setVersion('1.0.0')
+    .addBearerAuth(
+      { type: 'http', scheme: 'Bearer', name: 'JWT', in: 'header' },
+      'accessToken',
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, options);

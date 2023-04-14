@@ -9,6 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { Prisma } from '@prisma/client';
 import { RoleService } from '../role/role.service';
+import { UserDetailDto } from './dto/user-detail.dto';
 
 @Injectable()
 export class UserService {
@@ -51,7 +52,7 @@ export class UserService {
 
     if (!foundUser) throw new NotFoundException('사용자를 찾을 수 없습니다');
 
-    return new UserDto(foundUser);
+    return new UserDetailDto(foundUser);
   }
 
   async getUsers(args = {} as Prisma.UserFindManyArgs) {
