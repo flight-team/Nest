@@ -44,11 +44,10 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    const isDuplicated = await this.checkNameDuplicated(createUserDto.name);
-    if (isDuplicated) throw new BadRequestException('이미 존재하는 이름입니다');
-
-    const createdUser = await this.prisma.user.create({ data: createUserDto });
-    return createdUser.id;
+    // const isDuplicated = await this.checkNameDuplicated(createUserDto.name);
+    // if (isDuplicated) throw new BadRequestException('이미 존재하는 이름입니다');
+    // const createdUser = await this.prisma.user.create({ data: createUserDto });
+    // return createdUser.id;
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {

@@ -4,6 +4,10 @@ interface ToNumberOptions {
   max?: number;
 }
 
+export function toUpperCase(value: string): string {
+  return value.toUpperCase();
+}
+
 export function toLowerCase(value: string): string {
   return value.toLowerCase();
 }

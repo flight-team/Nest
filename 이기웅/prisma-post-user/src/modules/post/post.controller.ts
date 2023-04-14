@@ -1,4 +1,13 @@
 import {
+  ApiResponseArrayDto,
+  ApiResponseDto,
+  ResponseWithIdDto,
+} from '@/common/dto';
+import {
+  ResponseInterceptor,
+  ResponseWithIdInterceptor,
+} from '@/common/interceptors';
+import {
   Body,
   Controller,
   Delete,
@@ -12,17 +21,11 @@ import {
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { UserService } from '../user/user.service';
-import { CreatePostResponseDto } from './dto/create-post-response.dto';
 import { CreatePostDto } from './dto/create-post.dto';
 import { GetPostsQueryDto } from './dto/get-posts-query.dto';
 import { PostDto } from './dto/post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { PostService } from './post.service';
-import {
-  ResponseInterceptor,
-  ResponseWithIdInterceptor,
-} from '@/common/interceptors';
-import { ApiResponseArrayDto, ApiResponseDto } from '@/common/dto';
 
 @ApiTags('Post')
 @Controller('posts')
@@ -63,7 +66,7 @@ export class PostController {
   }
 
   @Post()
-  @ApiResponse({ status: 201, type: CreatePostResponseDto })
+  @ApiResponse({ status: 201, type: ResponseWithIdDto })
   @ApiOperation({ summary: '게시물 생성' })
   @UseInterceptors(ResponseWithIdInterceptor)
   @HttpCode(201)
