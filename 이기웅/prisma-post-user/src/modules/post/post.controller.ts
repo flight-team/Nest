@@ -89,7 +89,7 @@ export class PostController {
   @ApiResponse({ status: 204 })
   @ApiOperation({ summary: 'postId로 게시물 삭제' })
   @HttpCode(204)
-  deletePost(@Param('id') id: string) {
-    return this.postService.deletePost(id);
+  async deletePost(@Param('id') id: string) {
+    return await this.postService.deletePost(id);
   }
 }

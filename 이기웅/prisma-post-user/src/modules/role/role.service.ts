@@ -13,10 +13,14 @@ import { RoleDto } from './dto/role.dto';
 export class RoleService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async checkNameDuplicated(name: string): Promise<boolean> {
+  private async checkNameDuplicated(
+    name: string,
+    updateRoleId?: string,
+  ): Promise<boolean> {
     const role = await this.prisma.role.findFirst({
       where: {
         name,
+        NOT: { id: updateRoleId },
       },
     });
 
@@ -57,11 +61,26 @@ export class RoleService {
     return createdRole.id;
   }
 
-  update(id: number, updateRoleDto: UpdateRoleDto) {
-    return `This action updates a #${id} role`;
+  async updateRole(id: string, updateRoleDto: UpdateRoleDto) {
+    await this.getRole(id);
+    const isDuplicated = await this.checkNameDuplicated(
+      updateRoleDto?.name,
+      id,
+    );
+    if (isDuplicated) {
+      throw new BadRequestException(
+        `${updateRoleDto?.name}은 이미 존재하는 권한입니다.`,
+      );
+    }
+
+    return await this.prisma.role.update({
+      data: updateRoleDto,
+      where: { id },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} role`;
+  async deleteRole(id: string) {
+    await this.getRole(id);
+    return await this.prisma.role.delete({ where: { id } });
   }
 }
