@@ -1,4 +1,8 @@
 import {
+  ResponseInterceptor,
+  ResponseWithIdInterceptor,
+} from '@/common/interceptors';
+import {
   Body,
   Controller,
   Delete,
@@ -11,18 +15,17 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import {
-  ResponseInterceptor,
-  ResponseWithIdInterceptor,
-} from '@/common/interceptors';
-import { CreateUserResponseDto } from './dto/create-user-response.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetUsersQueryDto } from './dto/get-users-query.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDto } from './dto/user.dto';
 import { UserService } from './user.service';
 
-import { ApiResponseArrayDto, ApiResponseDto } from '@/common/dto';
+import {
+  ApiResponseArrayDto,
+  ApiResponseDto,
+  ResponseWithIdDto,
+} from '@/common/dto';
 
 @Controller('users')
 @ApiTags('User')
@@ -53,8 +56,9 @@ export class UserController {
 
   @Post()
   @ApiOperation({ summary: '사용자 생성' })
-  @ApiResponse({ status: 201, type: CreateUserResponseDto })
+  @ApiResponse({ status: 201, type: ResponseWithIdDto })
   @UseInterceptors(ResponseWithIdInterceptor)
+  @HttpCode(201)
   async createUser(@Body() createUserDto: CreateUserDto) {
     return await this.userService.createUser(createUserDto);
   }

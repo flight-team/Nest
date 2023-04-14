@@ -13,8 +13,16 @@ import { RoleService } from './role.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { ResponseArrayDto, ResponseWithIdDto } from '@/common/dto';
-import { ResponseWithIdInterceptor } from '@/common/interceptors';
+import {
+  ApiResponseArrayDto,
+  ApiResponseDto,
+  ResponseArrayDto,
+  ResponseWithIdDto,
+} from '@/common/dto';
+import {
+  ResponseInterceptor,
+  ResponseWithIdInterceptor,
+} from '@/common/interceptors';
 import { RoleDto } from './dto/role.dto';
 
 @Controller('admin/roles')
@@ -22,26 +30,29 @@ import { RoleDto } from './dto/role.dto';
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
-  @Post()
-  @ApiResponse({ status: 201, type: ResponseWithIdDto })
-  @ApiOperation({ summary: '권한 생성' })
-  @UseInterceptors(ResponseWithIdInterceptor)
-  @HttpCode(201)
-  async createRole(@Body() createRoleDto: CreateRoleDto) {
-    return await this.roleService.create(createRoleDto);
+  @Get(':id')
+  @ApiOperation({ summary: '권한 조회' })
+  @ApiResponseDto(RoleDto)
+  @UseInterceptors(ResponseInterceptor)
+  findOne(@Param('id') id: string) {
+    return this.roleService.getRole(id);
   }
 
   @Get()
-  @ApiResponse({ status: 200, type: [RoleDto] })
-  @ApiOperation({ summary: '권한 목록 조회' })
-  @UseInterceptors(ResponseArrayDto)
+  @ApiOperation({ summary: '권한 전체 조회' })
+  @ApiResponseArrayDto(RoleDto)
+  @UseInterceptors(ResponseInterceptor)
   async getRoles() {
     return await this.roleService.getRoles();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.roleService.findOne(+id);
+  @Post()
+  @ApiOperation({ summary: '권한 생성' })
+  @ApiResponse({ status: 201, type: ResponseWithIdDto })
+  @UseInterceptors(ResponseWithIdInterceptor)
+  @HttpCode(201)
+  async createRole(@Body() createRoleDto: CreateRoleDto) {
+    return await this.roleService.create(createRoleDto);
   }
 
   @Patch(':id')
