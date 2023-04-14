@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Post,
+  Req,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 
@@ -6,6 +13,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { Request } from 'express';
 import { AuthBodyDto } from './dto/auth-body.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { ResponseWithIdInterceptor } from '@/common/interceptors';
+import { ApiResponseDto, ResponseWithIdDto } from '@/common/dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -22,5 +31,9 @@ export class AuthController {
 
   @Post('register')
   @ApiOperation({ summary: '회원가입' })
-  async register(@Body() registerBodyDto: AuthBodyDto) {}
+  @ApiResponse({ status: 201, type: ResponseWithIdDto })
+  @UseInterceptors(ResponseWithIdInterceptor)
+  async register(@Body() registerBodyDto: AuthBodyDto) {
+    return await this.authService.register(registerBodyDto);
+  }
 }

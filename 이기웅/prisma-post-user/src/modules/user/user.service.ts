@@ -64,7 +64,6 @@ export class UserService {
   }
 
   async createUser(createUserDto: CreateUserDto) {
-    await this.roleService.getRole(createUserDto.role);
     const isDuplicated = await this.checkNameDuplicated(createUserDto.name);
     if (isDuplicated) throw new BadRequestException('이미 존재하는 이름입니다');
 
@@ -72,7 +71,7 @@ export class UserService {
       data: {
         name: createUserDto.name,
         password: createUserDto.password,
-        role: { connect: { name: createUserDto.role } },
+        role: { connect: { name: 'USER' } },
       },
     });
     return createdUser.id;
@@ -87,7 +86,6 @@ export class UserService {
       data: {
         name: updateUserDto.name,
         password: updateUserDto.password,
-        role: { update: { name: updateUserDto.role } },
       },
       where: { id },
     });

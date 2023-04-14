@@ -2,6 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserDetailDto } from '../user/dto/user-detail.dto';
 import { UserService } from '../user/user.service';
+import { AuthBodyDto } from './dto/auth-body.dto';
+
+// TODO: bcrypt도 해야하고...
+// TODO: db도 갈아야하냐?
 
 @Injectable()
 export class AuthService {
@@ -23,5 +27,9 @@ export class AuthService {
     return {
       accessToken: this.jwtService.sign(payload),
     };
+  }
+
+  async register(registerBodyDto: AuthBodyDto) {
+    return await this.userService.createUser(registerBodyDto);
   }
 }
