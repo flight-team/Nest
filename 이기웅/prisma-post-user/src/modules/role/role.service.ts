@@ -13,29 +13,25 @@ import { RoleDto } from './dto/role.dto';
 export class RoleService {
   constructor(private readonly prisma: PrismaService) {}
 
-  private async checkNameDuplicated(
-    name: string,
-    updateRoleId?: string,
-  ): Promise<boolean> {
+  private async checkNameDuplicated(name: string): Promise<boolean> {
     const role = await this.prisma.role.findFirst({
       where: {
         name,
-        NOT: { id: updateRoleId },
       },
     });
 
     return !!role;
   }
 
-  async getRole(id: string) {
+  async getRole(name: string) {
     const role = await this.prisma.role.findFirst({
       where: {
-        id,
+        name,
       },
     });
 
     if (!role) {
-      throw new NotFoundException(`id: ${id} 에 해당하는 권한이 없습니다.`);
+      throw new NotFoundException(`${name} 에 해당하는 권한이 없습니다.`);
     }
 
     return new RoleDto(role);
@@ -58,15 +54,12 @@ export class RoleService {
       data: createRoleDto,
     });
 
-    return createdRole.id;
+    return createdRole.name;
   }
 
   async updateRole(id: string, updateRoleDto: UpdateRoleDto) {
     await this.getRole(id);
-    const isDuplicated = await this.checkNameDuplicated(
-      updateRoleDto?.name,
-      id,
-    );
+    const isDuplicated = await this.checkNameDuplicated(updateRoleDto?.name);
     if (isDuplicated) {
       throw new BadRequestException(
         `${updateRoleDto?.name}은 이미 존재하는 권한입니다.`,
@@ -75,12 +68,12 @@ export class RoleService {
 
     return await this.prisma.role.update({
       data: updateRoleDto,
-      where: { id },
+      where: { name: id },
     });
   }
 
   async deleteRole(id: string) {
     await this.getRole(id);
-    return await this.prisma.role.delete({ where: { id } });
+    return await this.prisma.role.delete({ where: { name: id } });
   }
 }

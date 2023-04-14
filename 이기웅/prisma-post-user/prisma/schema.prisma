@@ -19,10 +19,10 @@ model User {
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
 
-  role   Role   @relation(fields: [roleId], references: [id])
-  roleId String
-
   posts Post[]
+
+  role     Role   @relation(fields: [roleName], references: [name])
+  roleName String
 }
 
 model Post {
@@ -38,8 +38,9 @@ model Post {
 }
 
 model Role {
-  id   String @id @default(uuid())
   name String @unique
 
   user User[]
+
+  @@id([name])
 }

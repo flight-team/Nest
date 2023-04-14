@@ -3,7 +3,7 @@ import { UserDto } from '@/modules/user/dto/user.dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 export type PostDtoArgs = Post & {
-  user?: User;
+  user: User;
 };
 
 export class PostDto {
@@ -23,7 +23,7 @@ export class PostDto {
   updatedAt: Date;
 
   @ApiProperty({ type: UserDto })
-  user?: UserDto;
+  user: UserDto;
 
   constructor(args: PostDtoArgs) {
     this.id = args.id;
@@ -31,6 +31,9 @@ export class PostDto {
     this.content = args.content;
     this.createdAt = args.createdAt;
     this.updatedAt = args.updatedAt;
-    this.user = new UserDto(args?.user);
+    this.user = new UserDto({
+      ...args.user,
+      role: { name: args.user.roleName },
+    });
   }
 }

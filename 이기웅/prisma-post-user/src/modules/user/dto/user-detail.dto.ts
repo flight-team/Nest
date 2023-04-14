@@ -2,16 +2,19 @@ import { RoleDto } from '@/modules/role/dto/role.dto';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 
-export type UserDtoArgs = User & {
+export type UserDetailDtoArgs = User & {
   role: RoleDto;
 };
 
-export class UserDto {
+export class UserDetailDto {
   @ApiProperty({ type: 'string' })
   id: string;
 
   @ApiProperty({ type: 'string' })
   name: string;
+
+  @ApiProperty({ type: 'string' })
+  password: string;
 
   @ApiProperty({ type: Date })
   createdAt: Date;
@@ -25,7 +28,7 @@ export class UserDto {
   @ApiProperty({ type: 'string' })
   role: string;
 
-  constructor(args: UserDtoArgs) {
+  constructor(args: UserDetailDtoArgs) {
     this.id = args.id;
     this.name = args.name;
     this.createdAt = args.createdAt;

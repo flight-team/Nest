@@ -10,6 +10,9 @@ class EnvironmentVariables {
 
   @IsNumber()
   SALT: number;
+
+  @IsString()
+  JWT_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {

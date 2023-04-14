@@ -29,12 +29,12 @@ import { RoleService } from './role.service';
 export class RoleController {
   constructor(private readonly roleService: RoleService) {}
 
-  @Get(':id')
+  @Get(':name')
   @ApiOperation({ summary: '권한 조회' })
   @ApiResponseDto(RoleDto)
   @UseInterceptors(ResponseInterceptor)
-  findOne(@Param('id') id: string) {
-    return this.roleService.getRole(id);
+  findOne(@Param('name') name: string) {
+    return this.roleService.getRole(name);
   }
 
   @Get()
@@ -54,7 +54,7 @@ export class RoleController {
     return await this.roleService.create(createRoleDto);
   }
 
-  @Patch(':id')
+  @Patch(':name')
   @ApiOperation({ summary: '권한 수정' })
   @ApiResponse({ status: 204 })
   @HttpCode(204)
@@ -66,7 +66,7 @@ export class RoleController {
   }
 
   // TODO: soft delete
-  @Delete(':id')
+  @Delete(':name')
   @ApiOperation({ summary: '권한 삭제' })
   @ApiResponse({ status: 204 })
   @HttpCode(204)
