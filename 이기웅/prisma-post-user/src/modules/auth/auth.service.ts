@@ -2,12 +2,14 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserDetailDto } from '../user/dto/user-detail.dto';
 import { UserService } from '../user/user.service';
-import { AuthBodyDto } from './dto/auth-body.dto';
+
 import { JwtPayload, JwtPayloadWithDate } from 'src/@types/auth';
 import { ConfigService } from '@nestjs/config';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { RefreshBodyDto } from './dto/refresh-body.dto';
 import { TokenExpiredError } from 'jsonwebtoken';
+import { RegisterBodyDto } from './dto/register-body.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
@@ -72,7 +74,7 @@ export class AuthService {
     return this.signToken({ name, id, role });
   }
 
-  async register(registerBodyDto: AuthBodyDto) {
+  async register(registerBodyDto: RegisterBodyDto) {
     return await this.userService.createUser(registerBodyDto);
   }
 

@@ -9,7 +9,7 @@ export class EnvironmentVariables {
   DATABASE_URL: string;
 
   @IsNumber()
-  SALT: number;
+  SALT_ROUNDS: number;
 
   @IsString()
   JWT_SECRET: string;

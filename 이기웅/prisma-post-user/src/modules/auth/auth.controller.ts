@@ -13,9 +13,11 @@ import { ResponseWithIdDto } from '@/common/dto';
 import { LocalAuthGuard } from '@/common/guards';
 import { ResponseWithIdInterceptor } from '@/common/interceptors';
 import { Request } from 'express';
-import { AuthBodyDto } from './dto/auth-body.dto';
+
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { RefreshBodyDto } from './dto/refresh-body.dto';
+import { LoginBodyDto } from './dto/login-body.dto';
+import { RegisterBodyDto } from './dto/register-body.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -26,7 +28,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @ApiOperation({ summary: '로그인' })
   @ApiResponse({ status: 200, type: AuthResponseDto })
-  login(@Req() req: Request, @Body() dto: AuthBodyDto) {
+  login(@Req() req: Request, @Body() dto: LoginBodyDto) {
     return this.authService.login(req.user);
   }
 
@@ -34,7 +36,7 @@ export class AuthController {
   @ApiOperation({ summary: '회원가입' })
   @ApiResponse({ status: 201, type: ResponseWithIdDto })
   @UseInterceptors(ResponseWithIdInterceptor)
-  async register(@Body() registerBodyDto: AuthBodyDto) {
+  async register(@Body() registerBodyDto: RegisterBodyDto) {
     return await this.authService.register(registerBodyDto);
   }
 

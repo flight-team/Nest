@@ -5,15 +5,20 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 import { Prisma } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserDetailDto } from './dto/user-detail.dto';
 import { UserDto } from './dto/user.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   private async checkNameDuplicated(
     name: string,
@@ -42,25 +47,25 @@ export class UserService {
   }
 
   async getUserForAuth(name: string, password: string) {
-    const foundUserWithName = await this.prisma.user.findFirst({
+    const foundUser = await this.prisma.user.findFirst({
       where: { name },
       include: { role: true },
     });
 
-    if (!foundUserWithName) {
+    if (!foundUser) {
       throw new UnauthorizedException('존재하지 않는 계정입니다.');
     }
 
-    const foundUserWithNameAndPassword = await this.prisma.user.findFirst({
-      where: { name, password },
-      include: { role: true },
-    });
+    const isPasswordMatched = await bcrypt.compare(
+      password,
+      foundUser.password,
+    );
 
-    if (!foundUserWithNameAndPassword) {
+    if (!isPasswordMatched) {
       throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
     }
 
-    return new UserDetailDto(foundUserWithNameAndPassword);
+    return new UserDetailDto(foundUser);
   }
 
   async getUsers(args = {} as Prisma.UserFindManyArgs) {
@@ -75,10 +80,15 @@ export class UserService {
     const isDuplicated = await this.checkNameDuplicated(createUserDto.name);
     if (isDuplicated) throw new BadRequestException('이미 존재하는 이름입니다');
 
+    const saltRounds = this.configService.get<number>('SALT');
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+
     const createdUser = await this.prisma.user.create({
       data: {
         name: createUserDto.name,
-        password: createUserDto.password,
+        password: hashedPassword,
+        salt,
         role: { connect: { name: 'USER' } },
       },
     });
