@@ -3,6 +3,7 @@ import { NestFactory } from '@nestjs/core';
 
 import { setGlobalInterceptors } from '@/common/interceptors';
 import { AppModule } from './app.module';
+import { setGlobalGuards } from './common/guards';
 import { setupApp } from './config/app.config';
 import { setupSwagger } from './config/swagger.config';
 import { PrismaService } from './database';
@@ -15,6 +16,7 @@ async function bootstrap() {
   setupApp(app);
   setupSwagger(app);
   setGlobalInterceptors(app);
+  setGlobalGuards(app);
 
   await prismaService.enableShutdownHooks(app);
 

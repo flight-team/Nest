@@ -3,13 +3,12 @@ import { JwtService } from '@nestjs/jwt';
 import { UserDetailDto } from '../user/dto/user-detail.dto';
 import { UserService } from '../user/user.service';
 
-import { JwtPayload, JwtPayloadWithDate } from 'src/@types/auth';
 import { ConfigService } from '@nestjs/config';
+import { TokenExpiredError } from 'jsonwebtoken';
+import { JwtPayload, JwtPayloadWithDate } from 'src/@types/auth';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { RefreshBodyDto } from './dto/refresh-body.dto';
-import { TokenExpiredError } from 'jsonwebtoken';
 import { RegisterBodyDto } from './dto/register-body.dto';
-import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {

@@ -7,3 +7,4 @@ export function setGlobalInterceptors<T extends INestApplication>(app: T) {
 
 export { ResponseInterceptor } from './response.interceptor';
 export { ResponseWithIdInterceptor } from './response-with-id.interceptor';
+export { Roles } from './role.interceptor';

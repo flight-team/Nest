@@ -1,6 +1,7 @@
 import {
   ResponseInterceptor,
   ResponseWithIdInterceptor,
+  Roles,
 } from '@/common/interceptors';
 import {
   Body,
@@ -12,9 +13,15 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { CreateUserDto } from './dto/create-user.dto';
 import { GetUsersQueryDto } from './dto/get-users-query.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -26,6 +33,8 @@ import {
   ApiResponseDto,
   ResponseWithIdDto,
 } from '@/common/dto';
+import { JwtAuthGuard } from '@/common/guards';
+import { ROLE } from 'src/utils/constants';
 
 @Controller('users')
 @ApiTags('User')
@@ -58,6 +67,9 @@ export class UserController {
   @ApiOperation({ summary: '사용자 생성' })
   @ApiResponse({ status: 201, type: ResponseWithIdDto })
   @UseInterceptors(ResponseWithIdInterceptor)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('accessToken')
+  @Roles(ROLE.ADMIN)
   @HttpCode(201)
   async createUser(@Body() createUserDto: CreateUserDto) {
     return await this.userService.createUser(createUserDto);

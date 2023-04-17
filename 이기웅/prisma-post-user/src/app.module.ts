@@ -7,10 +7,16 @@ import { AppController } from './app.controller';
 import { PrismaModule } from './database';
 
 import Modules from './modules';
+import { APP_GUARD } from '@nestjs/core';
+import { JwtAuthGuard } from './common';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
     PrismaModule,
+    JwtModule.register({
+      global: true,
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
@@ -18,6 +24,12 @@ import Modules from './modules';
       envFilePath: '.env',
     }),
     ...Modules,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
   ],
   controllers: [AppController],
 })
