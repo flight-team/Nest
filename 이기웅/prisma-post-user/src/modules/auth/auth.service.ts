@@ -65,7 +65,7 @@ export class AuthService {
       if (err instanceof TokenExpiredError) {
         throw new UnauthorizedException('Refresh Token expired');
       }
-      throw err;
+      throw new UnauthorizedException('Invalid Token');
     }
   }
 
@@ -79,12 +79,11 @@ export class AuthService {
   }
 
   async refresh(dto: RefreshBodyDto): Promise<AuthResponseDto> {
-    if (!dto.refreshToken || !dto.refreshToken.startsWith('Bearer ')) {
+    if (!dto.refreshToken) {
       throw new UnauthorizedException('Invalid Refresh Token');
     }
 
-    const refreshToken = dto.refreshToken.split('Bearer ')[1];
-    const payload = await this.verifyToken(refreshToken);
+    const payload = await this.verifyToken(dto.refreshToken);
 
     return this.signToken(payload);
   }

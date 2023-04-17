@@ -74,7 +74,6 @@ export class RoleController {
     return this.roleService.updateRole(id, updateRoleDto);
   }
 
-  // TODO: soft delete
   @Delete(':name')
   @ApiOperation({ summary: '권한 삭제' })
   @ApiResponse({ status: 204 })
