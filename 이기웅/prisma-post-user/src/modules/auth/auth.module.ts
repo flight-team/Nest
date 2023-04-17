@@ -5,7 +5,7 @@ import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 
-import { JWT_EXPIRATION_TIME, JWT_SECRET } from '@/common/constants/jwt';
+import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
 
@@ -14,9 +14,10 @@ import { LocalStrategy } from './strategy/local.strategy';
     PassportModule.register({ defaultStrategy: 'jwt', session: true }),
     UserModule,
     JwtModule.register({
-      // FIXME: JWT_SECRET 을 env에 어떻게 넣죠?
-      secret: JWT_SECRET,
-      signOptions: { expiresIn: JWT_EXPIRATION_TIME },
+      secret: new ConfigService().get<string>('JWT_SECRET'),
+      signOptions: {
+        expiresIn: new ConfigService().get<string>('JWT_EXPIRES_IN'),
+      },
     }),
   ],
   controllers: [AuthController],
