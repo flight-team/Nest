@@ -4,9 +4,6 @@ import { UserDetailDto } from '../user/dto/user-detail.dto';
 import { UserService } from '../user/user.service';
 import { AuthBodyDto } from './dto/auth-body.dto';
 
-// TODO: bcrypt도 해야하고...
-// TODO: db도 갈아야하냐?
-
 @Injectable()
 export class AuthService {
   constructor(

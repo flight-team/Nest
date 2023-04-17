@@ -15,6 +15,7 @@ import { AuthBodyDto } from './dto/auth-body.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
 import { ResponseWithIdInterceptor } from '@/common/interceptors';
 import { ApiResponseDto, ResponseWithIdDto } from '@/common/dto';
+import { LocalAuthGuard } from '@/common/guards';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -22,7 +23,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
-  @UseGuards(AuthGuard('local'))
+  @UseGuards(LocalAuthGuard)
   @ApiOperation({ summary: '로그인' })
   @ApiResponse({ status: 200, type: AuthResponseDto })
   async login(@Req() req: Request, @Body() dto: AuthBodyDto) {

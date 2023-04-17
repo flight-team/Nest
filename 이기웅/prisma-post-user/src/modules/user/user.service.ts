@@ -3,20 +3,17 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { UserDto } from './dto/user.dto';
-import { Prisma } from '@prisma/client';
-import { RoleService } from '../role/role.service';
 import { UserDetailDto } from './dto/user-detail.dto';
+import { UserDto } from './dto/user.dto';
 
 @Injectable()
 export class UserService {
-  constructor(
-    private readonly prisma: PrismaService,
-    private readonly roleService: RoleService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   private async checkNameDuplicated(
     name: string,
@@ -44,15 +41,27 @@ export class UserService {
     return new UserDto(foundUser);
   }
 
+  // TODO: db hash
   async getUserForAuth(name: string, password: string) {
-    const foundUser = await this.prisma.user.findFirst({
+    const foundUserWithName = await this.prisma.user.findFirst({
+      where: { name },
+      include: { role: true },
+    });
+
+    if (!foundUserWithName) {
+      throw new UnauthorizedException('존재하지 않는 계정입니다.');
+    }
+
+    const foundUserWithNameAndPassword = await this.prisma.user.findFirst({
       where: { name, password },
       include: { role: true },
     });
 
-    if (!foundUser) throw new NotFoundException('사용자를 찾을 수 없습니다');
+    if (!foundUserWithNameAndPassword) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
 
-    return new UserDetailDto(foundUser);
+    return new UserDetailDto(foundUserWithNameAndPassword);
   }
 
   async getUsers(args = {} as Prisma.UserFindManyArgs) {

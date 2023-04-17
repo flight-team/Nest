@@ -29,7 +29,7 @@ import { CreateRoleDto } from './dto/create-role.dto';
 import { RoleDto } from './dto/role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RoleService } from './role.service';
-import { AuthGuard } from '@nestjs/passport';
+import { JwtAuthGuard } from '@/common/guards';
 
 @Controller('admin/roles')
 @ApiTags('[ADMIN] Role')
@@ -45,8 +45,8 @@ export class RoleController {
   }
 
   @Get()
-  @UseGuards(AuthGuard('jwt'))
   @ApiOperation({ summary: '권한 전체 조회' })
+  @UseGuards(JwtAuthGuard)
   @ApiResponseArrayDto(RoleDto)
   @ApiBearerAuth('accessToken')
   @UseInterceptors(ResponseInterceptor)

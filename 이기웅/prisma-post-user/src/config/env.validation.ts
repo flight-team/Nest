@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer';
 import { IsNumber, IsString, validateSync } from 'class-validator';
 
-class EnvironmentVariables {
+export class EnvironmentVariables {
   @IsNumber()
   PORT: number;
 
@@ -10,6 +10,12 @@ class EnvironmentVariables {
 
   @IsNumber()
   SALT: number;
+
+  @IsString()
+  JWT_SECRET: string;
+
+  @IsString()
+  JWT_EXPIRES_IN: string;
 }
 
 export function validate(config: Record<string, unknown>) {
