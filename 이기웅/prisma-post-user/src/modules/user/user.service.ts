@@ -41,7 +41,6 @@ export class UserService {
     return new UserDto(foundUser);
   }
 
-  // TODO: db hash
   async getUserForAuth(name: string, password: string) {
     const foundUserWithName = await this.prisma.user.findFirst({
       where: { name },

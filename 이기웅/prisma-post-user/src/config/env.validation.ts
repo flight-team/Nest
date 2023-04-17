@@ -15,7 +15,10 @@ export class EnvironmentVariables {
   JWT_SECRET: string;
 
   @IsString()
-  JWT_EXPIRES_IN: string;
+  JWT_ACCESS_TOKEN_EXPIRES_IN: string;
+
+  @IsString()
+  JWT_REFRESH_TOKEN_EXPIRES_IN: string;
 }
 
 export function validate(config: Record<string, unknown>) {

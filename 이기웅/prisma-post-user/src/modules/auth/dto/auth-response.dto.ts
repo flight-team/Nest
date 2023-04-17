@@ -6,4 +6,9 @@ export class AuthResponseDto {
   @IsString()
   @IsNotEmpty()
   accessToken: string;
+
+  @ApiProperty({ type: 'string' })
+  @IsString()
+  @IsNotEmpty()
+  refreshToken: string;
 }

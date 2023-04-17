@@ -1,21 +1,23 @@
 import {
   Body,
   Controller,
+  Header,
+  Headers,
   Post,
   Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 
-import { AuthGuard } from '@nestjs/passport';
+import { ResponseWithIdDto } from '@/common/dto';
+import { LocalAuthGuard } from '@/common/guards';
+import { ResponseWithIdInterceptor } from '@/common/interceptors';
 import { Request } from 'express';
 import { AuthBodyDto } from './dto/auth-body.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
-import { ResponseWithIdInterceptor } from '@/common/interceptors';
-import { ApiResponseDto, ResponseWithIdDto } from '@/common/dto';
-import { LocalAuthGuard } from '@/common/guards';
+import { JwtRefreshAuthGuard } from '@/common/guards/jwt-refresh-auth.guard';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -26,8 +28,8 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @ApiOperation({ summary: '로그인' })
   @ApiResponse({ status: 200, type: AuthResponseDto })
-  async login(@Req() req: Request, @Body() dto: AuthBodyDto) {
-    return await this.authService.login(req.user);
+  login(@Req() req: Request, @Body() dto: AuthBodyDto) {
+    return this.authService.login(req.user);
   }
 
   @Post('register')
@@ -36,5 +38,23 @@ export class AuthController {
   @UseInterceptors(ResponseWithIdInterceptor)
   async register(@Body() registerBodyDto: AuthBodyDto) {
     return await this.authService.register(registerBodyDto);
+  }
+
+  @Post('refresh')
+  @ApiOperation({ summary: '토큰 재발급' })
+  @ApiResponse({ status: 200, type: AuthResponseDto })
+  @UseGuards(JwtRefreshAuthGuard)
+  @ApiHeader({
+    name: 'authorization',
+    required: true,
+    example: 'Bearer ',
+    description: 'Bearer {refreshToken}',
+  })
+  async refresh(
+    @Req() req: Request,
+    @Headers('authorization') authorization: string,
+  ) {
+    console.log(authorization);
+    return await this.authService.refresh();
   }
 }

@@ -8,6 +8,7 @@ import { AuthService } from './auth.service';
 import { ConfigService } from '@nestjs/config';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
+import { JwtRefreshStrategy } from './strategy/jwt-refresh.strategy';
 
 @Module({
   imports: [
@@ -15,12 +16,9 @@ import { LocalStrategy } from './strategy/local.strategy';
     UserModule,
     JwtModule.register({
       secret: new ConfigService().get<string>('JWT_SECRET'),
-      signOptions: {
-        expiresIn: new ConfigService().get<string>('JWT_EXPIRES_IN'),
-      },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy],
+  providers: [AuthService, LocalStrategy, JwtStrategy, JwtRefreshStrategy],
 })
 export class AuthModule {}
