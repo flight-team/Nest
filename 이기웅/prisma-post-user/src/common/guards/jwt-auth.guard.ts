@@ -8,8 +8,6 @@ import { JwtPayloadWithDate } from 'src/@types/auth';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  // MEMO: canActivate: jwt validation을 하기 전에 검증
-  // MEMO: handleRequest: jwt validation을 한 후에 검증
   handleRequest<Payload extends JwtPayloadWithDate>(
     err: any,
     payload: Payload,

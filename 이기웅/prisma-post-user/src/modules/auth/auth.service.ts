@@ -1,11 +1,13 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserDetailDto } from '../user/dto/user-detail.dto';
 import { UserService } from '../user/user.service';
 import { AuthBodyDto } from './dto/auth-body.dto';
-import { JwtPayload } from 'src/@types/auth';
+import { JwtPayload, JwtPayloadWithDate } from 'src/@types/auth';
 import { ConfigService } from '@nestjs/config';
 import { AuthResponseDto } from './dto/auth-response.dto';
+import { RefreshBodyDto } from './dto/refresh-body.dto';
+import { TokenExpiredError } from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
@@ -21,27 +23,67 @@ export class AuthService {
     return user;
   }
 
-  login(userDetail: UserDetailDto): AuthResponseDto {
-    const { name, id, role } = userDetail;
-    const payload: JwtPayload = { name, id, role };
+  private signToken(payload: JwtPayload | JwtPayloadWithDate): AuthResponseDto {
+    const { name, id, role } = payload;
 
     return {
-      accessToken: this.jwtService.sign(payload, {
-        expiresIn: this.configService.get<string>(
-          'JWT_ACCESS_TOKEN_EXPIRES_IN',
-        ),
-      }),
-      refreshToken: this.jwtService.sign(payload, {
-        expiresIn: this.configService.get<string>(
-          'JWT_REFRESH_TOKEN_EXPIRES_IN',
-        ),
-      }),
+      accessToken: this.jwtService.sign(
+        { name, id, role },
+        {
+          expiresIn: this.configService.get<string>(
+            'JWT_ACCESS_TOKEN_EXPIRES_IN',
+          ),
+        },
+      ),
+      refreshToken: this.jwtService.sign(
+        { name, id, role },
+        {
+          expiresIn: this.configService.get<string>(
+            'JWT_REFRESH_TOKEN_EXPIRES_IN',
+          ),
+        },
+      ),
     };
+  }
+
+  private async verifyToken(token: string): Promise<JwtPayloadWithDate> {
+    try {
+      const payload = await this.jwtService.verifyAsync<JwtPayloadWithDate>(
+        token,
+        {
+          ignoreExpiration: false,
+          secret: this.configService.get<string>('JWT_SECRET'),
+        },
+      );
+
+      if (!payload) throw new UnauthorizedException('Invalid Token');
+
+      return payload;
+    } catch (err) {
+      if (err instanceof TokenExpiredError) {
+        throw new UnauthorizedException('Refresh Token expired');
+      }
+      throw err;
+    }
+  }
+
+  login(userDetail: UserDetailDto): AuthResponseDto {
+    const { name, id, role } = userDetail;
+    return this.signToken({ name, id, role });
   }
 
   async register(registerBodyDto: AuthBodyDto) {
     return await this.userService.createUser(registerBodyDto);
   }
 
-  async refresh() {}
+  async refresh(dto: RefreshBodyDto): Promise<AuthResponseDto> {
+    if (!dto.refreshToken || !dto.refreshToken.startsWith('Bearer ')) {
+      throw new UnauthorizedException('Invalid Refresh Token');
+    }
+
+    const refreshToken = dto.refreshToken.split('Bearer ')[1];
+    const payload = await this.verifyToken(refreshToken);
+
+    return this.signToken(payload);
+  }
 }

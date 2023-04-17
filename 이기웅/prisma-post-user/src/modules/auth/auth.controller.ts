@@ -1,14 +1,12 @@
 import {
   Body,
   Controller,
-  Header,
-  Headers,
   Post,
   Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 
 import { ResponseWithIdDto } from '@/common/dto';
@@ -17,7 +15,7 @@ import { ResponseWithIdInterceptor } from '@/common/interceptors';
 import { Request } from 'express';
 import { AuthBodyDto } from './dto/auth-body.dto';
 import { AuthResponseDto } from './dto/auth-response.dto';
-import { JwtRefreshAuthGuard } from '@/common/guards/jwt-refresh-auth.guard';
+import { RefreshBodyDto } from './dto/refresh-body.dto';
 
 @Controller('auth')
 @ApiTags('Auth')
@@ -43,18 +41,7 @@ export class AuthController {
   @Post('refresh')
   @ApiOperation({ summary: '토큰 재발급' })
   @ApiResponse({ status: 200, type: AuthResponseDto })
-  @UseGuards(JwtRefreshAuthGuard)
-  @ApiHeader({
-    name: 'authorization',
-    required: true,
-    example: 'Bearer ',
-    description: 'Bearer {refreshToken}',
-  })
-  async refresh(
-    @Req() req: Request,
-    @Headers('authorization') authorization: string,
-  ) {
-    console.log(authorization);
-    return await this.authService.refresh();
+  async refresh(@Body() dto: RefreshBodyDto) {
+    return await this.authService.refresh(dto);
   }
 }
