@@ -6,10 +6,8 @@ import { validate } from '@/config/env.validation';
 import { AppController } from './app.controller';
 import { PrismaModule } from './database';
 
-import Modules from './modules';
-import { APP_GUARD } from '@nestjs/core';
-import { JwtAuthGuard } from './common';
 import { JwtModule } from '@nestjs/jwt';
+import Modules from './modules';
 
 @Module({
   imports: [
@@ -24,12 +22,6 @@ import { JwtModule } from '@nestjs/jwt';
       envFilePath: '.env',
     }),
     ...Modules,
-  ],
-  providers: [
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    },
   ],
   controllers: [AppController],
 })
