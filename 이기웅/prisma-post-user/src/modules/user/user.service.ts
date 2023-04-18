@@ -80,7 +80,7 @@ export class UserService {
     const isDuplicated = await this.checkNameDuplicated(createUserDto.name);
     if (isDuplicated) throw new BadRequestException('이미 존재하는 이름입니다');
 
-    const saltRounds = this.configService.get<number>('SALT');
+    const saltRounds = this.configService.get<number>('SALT_ROUNDS');
     const salt = await bcrypt.genSalt(saltRounds);
     const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
 
@@ -114,4 +114,6 @@ export class UserService {
 
     await this.prisma.user.delete({ where: { id } });
   }
+
+  async getMe() {}
 }

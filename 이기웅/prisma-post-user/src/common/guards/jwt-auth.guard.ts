@@ -57,8 +57,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 
     const userRole = decoded.role;
     const canActivate = roles.includes(userRole);
-    if (!canActivate)
+
+    if (!canActivate) {
       throw new ForbiddenException('접근할 수 없는 권한입니다.');
+    }
 
     return canActivate;
   }

@@ -74,7 +74,12 @@ export class AuthService {
   }
 
   async register(registerBodyDto: RegisterBodyDto) {
-    return await this.userService.createUser(registerBodyDto);
+    await this.userService.createUser(registerBodyDto);
+    const user = await this.userService.getUserForAuth(
+      registerBodyDto.name,
+      registerBodyDto.password,
+    );
+    return this.login(user);
   }
 
   async refresh(dto: RefreshBodyDto): Promise<AuthResponseDto> {

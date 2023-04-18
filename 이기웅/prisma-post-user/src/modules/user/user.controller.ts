@@ -35,13 +35,15 @@ import {
 } from '@/common/dto';
 import { JwtAuthGuard } from '@/common/guards';
 import { ROLE } from 'src/utils/constants';
+import { ACCESS_TOKEN } from 'src/utils/constants/jwt.constant';
+import { User } from '@/common/decorators';
 
 @Controller('users')
 @ApiTags('User')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get(':id')
+  @Get('detail/:id')
   @ApiResponseDto(UserDto)
   @ApiOperation({ summary: 'userId로 사용자 조회' })
   @UseInterceptors(ResponseInterceptor)
@@ -68,7 +70,7 @@ export class UserController {
   @ApiResponse({ status: 201, type: ResponseWithIdDto })
   @UseInterceptors(ResponseWithIdInterceptor)
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('accessToken')
+  @ApiBearerAuth(ACCESS_TOKEN)
   @Roles(ROLE.ADMIN)
   @HttpCode(201)
   async createUser(@Body() createUserDto: CreateUserDto) {
@@ -92,5 +94,16 @@ export class UserController {
   @HttpCode(204)
   async deleteUser(@Param('id') id: string) {
     return await this.userService.deleteUser(id);
+  }
+
+  @Get('me')
+  @ApiOperation({ summary: '내 정보 조회' })
+  @ApiResponseDto(UserDto)
+  @UseInterceptors(ResponseInterceptor)
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth(ACCESS_TOKEN)
+  async getMe(@User() user) {
+    console.log({ user });
+    return user;
   }
 }

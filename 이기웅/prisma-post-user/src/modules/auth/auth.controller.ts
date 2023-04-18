@@ -34,8 +34,7 @@ export class AuthController {
 
   @Post('register')
   @ApiOperation({ summary: '회원가입' })
-  @ApiResponse({ status: 201, type: ResponseWithIdDto })
-  @UseInterceptors(ResponseWithIdInterceptor)
+  @ApiResponse({ status: 201, type: AuthResponseDto })
   async register(@Body() registerBodyDto: RegisterBodyDto) {
     return await this.authService.register(registerBodyDto);
   }
