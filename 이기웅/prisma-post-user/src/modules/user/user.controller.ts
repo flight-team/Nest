@@ -7,6 +7,7 @@ import {
   Body,
   Controller,
   Delete,
+  ForbiddenException,
   Get,
   HttpCode,
   Param,
@@ -81,10 +82,18 @@ export class UserController {
   @ApiOperation({ summary: 'userId로 사용자 수정' })
   @ApiResponse({ status: 204 })
   @HttpCode(204)
+  @UseGuards(JwtAuthGuard)
+  @Roles(ROLE.USER, ROLE.ADMIN)
+  @ApiBearerAuth(ACCESS_TOKEN)
   async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
+    @User() user: UserDto,
   ) {
+    if (user.role !== ROLE.ADMIN && user.id !== id) {
+      throw new ForbiddenException('권한이 없습니다.');
+    }
+
     return await this.userService.updateUser(id, updateUserDto);
   }
 
@@ -92,7 +101,14 @@ export class UserController {
   @ApiOperation({ summary: 'userId로 사용자 삭제' })
   @ApiResponse({ status: 204 })
   @HttpCode(204)
-  async deleteUser(@Param('id') id: string) {
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth(ACCESS_TOKEN)
+  @Roles(ROLE.ADMIN, ROLE.USER)
+  async deleteUser(@Param('id') id: string, @User() user: UserDto) {
+    if (user.role !== ROLE.ADMIN && user.id !== id) {
+      throw new ForbiddenException('권한이 없습니다.');
+    }
+
     return await this.userService.deleteUser(id);
   }
 
@@ -102,8 +118,8 @@ export class UserController {
   @UseInterceptors(ResponseInterceptor)
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth(ACCESS_TOKEN)
-  async getMe(@User() user) {
-    console.log({ user });
+  @Roles(ROLE.ADMIN, ROLE.USER)
+  async getMe(@User() user: UserDto) {
     return user;
   }
 }

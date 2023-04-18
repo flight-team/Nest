@@ -9,6 +9,7 @@ import { UserService } from '../user/user.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { UserDto } from '../user/dto/user.dto';
 
 @Injectable()
 export class PostService {
@@ -54,13 +55,12 @@ export class PostService {
     return posts.map((post) => new PostDto(post));
   }
 
-  async createPost(createPostDto: CreatePostDto) {
-    await this.userService.getUser(createPostDto.userId);
+  async createPost(createPostDto: CreatePostDto, userId: string) {
     const isDuplicated = await this.checkTitleDuplicated(createPostDto.title);
     if (isDuplicated) throw new BadRequestException('이미 존재하는 제목입니다');
 
     const createdPost = await this.prisma.post.create({
-      data: createPostDto,
+      data: { ...createPostDto, userId },
     });
 
     return { id: createdPost.id };
@@ -73,10 +73,6 @@ export class PostService {
       id,
     );
     if (isDuplicated) throw new BadRequestException('이미 존재하는 제목입니다');
-
-    if (updatePostDto?.userId) {
-      await this.userService.getUser(updatePostDto.userId);
-    }
 
     await this.prisma.post.update({
       where: { id },

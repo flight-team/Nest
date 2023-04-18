@@ -17,6 +17,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -33,6 +34,9 @@ import { RoleService } from './role.service';
 import { JwtAuthGuard } from '@/common/guards';
 import { ROLE } from 'src/utils/constants';
 import { ACCESS_TOKEN } from 'src/utils/constants/jwt.constant';
+import { Request } from 'express';
+import { User } from '@/common/decorators';
+import { UserDto } from '../user/dto/user.dto';
 
 @Controller('admin/roles')
 @ApiTags('[ADMIN] Role')
@@ -52,7 +56,6 @@ export class RoleController {
 
   @Get()
   @ApiOperation({ summary: '권한 전체 조회' })
-  @UseGuards(JwtAuthGuard)
   @ApiResponseArrayDto(RoleDto)
   @ApiBearerAuth(ACCESS_TOKEN)
   @UseInterceptors(ResponseInterceptor)

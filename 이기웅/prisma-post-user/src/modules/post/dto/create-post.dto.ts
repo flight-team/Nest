@@ -9,8 +9,4 @@ export class CreatePostDto {
 
   @ApiPropertyOptional({ type: 'string' })
   content?: string;
-
-  @ApiProperty({ type: 'string' })
-  @IsNotEmpty()
-  userId: string;
 }

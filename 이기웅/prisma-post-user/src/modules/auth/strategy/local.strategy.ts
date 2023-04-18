@@ -14,6 +14,7 @@ export class LocalStrategy extends PassportStrategy(Strategy, 'local') {
     });
   }
 
+  // canActivate가 실행되고 나서 실행되는 메서드이며, 반환한 user는 handleRequest가 반환하게 된다.
   async validate(name: string, password: string): Promise<UserDetailDto> {
     const user = await this.authService.validateUser(name, password);
 
