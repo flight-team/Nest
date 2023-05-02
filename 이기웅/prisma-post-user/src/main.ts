@@ -7,6 +7,7 @@ import { setGlobalGuards } from './common/guards';
 import { setupApp } from './config/app.config';
 import { setupSwagger } from './config/swagger.config';
 import { PrismaService } from './database';
+import { setGlobalFilters } from './common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -17,6 +18,7 @@ async function bootstrap() {
   setupSwagger(app);
   setGlobalInterceptors(app);
   setGlobalGuards(app);
+  setGlobalFilters(app);
 
   await prismaService.enableShutdownHooks(app);
 
