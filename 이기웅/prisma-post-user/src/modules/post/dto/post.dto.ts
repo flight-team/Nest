@@ -31,6 +31,9 @@ export class PostDto {
     this.content = args.content;
     this.createdAt = args.createdAt;
     this.updatedAt = args.updatedAt;
-    this.user = new UserDto(args.user);
+    this.user = new UserDto({
+      ...args.user,
+      role: { name: args.user.roleName },
+    });
   }
 }

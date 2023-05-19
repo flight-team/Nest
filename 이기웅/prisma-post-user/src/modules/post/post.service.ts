@@ -1,14 +1,15 @@
-import { Prisma } from '@prisma/client';
 import { PrismaService } from '@/database/prisma.service';
 import {
   BadRequestException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { UserService } from '../user/user.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { PostDto } from './dto/post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { UserDto } from '../user/dto/user.dto';
 
 @Injectable()
 export class PostService {
@@ -45,37 +46,21 @@ export class PostService {
     return new PostDto(post);
   }
 
-  async getPosts(searchKey?: string, userId?: string) {
-    if (userId) await this.userService.getUser(userId);
-
+  async getPosts(args = {} as Prisma.PostFindManyArgs) {
     const posts = await this.prisma.post.findMany({
-      where: {
-        OR: [
-          {
-            title: {
-              contains: searchKey,
-            },
-          },
-          {
-            content: {
-              contains: searchKey,
-            },
-          },
-        ],
-      },
+      ...args,
       include: { user: true },
     });
 
     return posts.map((post) => new PostDto(post));
   }
 
-  async createPost(createPostDto: CreatePostDto) {
-    await this.userService.getUser(createPostDto.userId);
+  async createPost(createPostDto: CreatePostDto, userId: string) {
     const isDuplicated = await this.checkTitleDuplicated(createPostDto.title);
     if (isDuplicated) throw new BadRequestException('이미 존재하는 제목입니다');
 
     const createdPost = await this.prisma.post.create({
-      data: createPostDto,
+      data: { ...createPostDto, userId },
     });
 
     return { id: createdPost.id };
@@ -84,14 +69,10 @@ export class PostService {
   async updatePost(id: string, updatePostDto: UpdatePostDto) {
     await this.getPost(id);
     const isDuplicated = await this.checkTitleDuplicated(
-      updatePostDto.title,
+      updatePostDto?.title,
       id,
     );
     if (isDuplicated) throw new BadRequestException('이미 존재하는 제목입니다');
-
-    if (updatePostDto?.userId) {
-      await this.userService.getUser(updatePostDto.userId);
-    }
 
     await this.prisma.post.update({
       where: { id },

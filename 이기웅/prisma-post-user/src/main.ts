@@ -1,11 +1,30 @@
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import * as dotenv from 'dotenv';
 
-dotenv.config({ path: '.env.local' });
+import { setGlobalInterceptors } from '@/common/interceptors';
+import { AppModule } from './app.module';
+import { setGlobalGuards } from './common/guards';
+import { setupApp } from './config/app.config';
+import { setupSwagger } from './config/swagger.config';
+import { PrismaService } from './database';
+import { setGlobalFilters } from './common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(3000);
+  const configService = app.get(ConfigService);
+  const prismaService = app.get(PrismaService);
+
+  setupApp(app);
+  setupSwagger(app);
+  setGlobalInterceptors(app);
+  setGlobalGuards(app);
+  setGlobalFilters(app);
+
+  await prismaService.enableShutdownHooks(app);
+
+  await app.listen(configService.get<number>('PORT'), () => {
+    console.info(`Listening on port ${configService.get<number>('PORT')} 🚀`);
+  });
 }
+
 bootstrap();

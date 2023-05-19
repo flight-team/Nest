@@ -3,14 +3,22 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+import { Prisma } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UserDetailDto } from './dto/user-detail.dto';
 import { UserDto } from './dto/user.dto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   private async checkNameDuplicated(
     name: string,
@@ -27,6 +35,7 @@ export class UserService {
   async getUser(id: string) {
     const foundUser = await this.prisma.user.findFirst({
       where: { id },
+      include: { role: true },
     });
 
     if (!foundUser)
@@ -37,15 +46,33 @@ export class UserService {
     return new UserDto(foundUser);
   }
 
-  async getUsers(name?: string) {
-    const users = await this.prisma.user.findMany({
-      where: {
-        name: {
-          contains: name,
-        },
-      },
+  async getUserForAuth(name: string, password: string) {
+    const foundUser = await this.prisma.user.findFirst({
+      where: { name },
+      include: { role: true },
     });
 
+    if (!foundUser) {
+      throw new UnauthorizedException('존재하지 않는 계정입니다.');
+    }
+
+    const isPasswordMatched = await bcrypt.compare(
+      password,
+      foundUser.password,
+    );
+
+    if (!isPasswordMatched) {
+      throw new UnauthorizedException('비밀번호가 일치하지 않습니다.');
+    }
+
+    return new UserDetailDto(foundUser);
+  }
+
+  async getUsers(args = {} as Prisma.UserFindManyArgs) {
+    const users = await this.prisma.user.findMany({
+      ...args,
+      include: { role: true },
+    });
     return users.map((user) => new UserDto(user));
   }
 
@@ -53,8 +80,19 @@ export class UserService {
     const isDuplicated = await this.checkNameDuplicated(createUserDto.name);
     if (isDuplicated) throw new BadRequestException('이미 존재하는 이름입니다');
 
-    const createdUser = await this.prisma.user.create({ data: createUserDto });
-    return { id: createdUser.id };
+    const saltRounds = this.configService.get<number>('SALT_ROUNDS');
+    const salt = await bcrypt.genSalt(saltRounds);
+    const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
+
+    const createdUser = await this.prisma.user.create({
+      data: {
+        name: createUserDto.name,
+        password: hashedPassword,
+        salt,
+        role: { connect: { name: 'USER' } },
+      },
+    });
+    return createdUser.id;
   }
 
   async updateUser(id: string, updateUserDto: UpdateUserDto) {
@@ -63,7 +101,10 @@ export class UserService {
     if (isDuplicated) throw new BadRequestException('이미 존재하는 이름입니다');
 
     await this.prisma.user.update({
-      data: updateUserDto,
+      data: {
+        name: updateUserDto.name,
+        password: updateUserDto.password,
+      },
       where: { id },
     });
   }
@@ -73,4 +114,6 @@ export class UserService {
 
     await this.prisma.user.delete({ where: { id } });
   }
+
+  async getMe() {}
 }
